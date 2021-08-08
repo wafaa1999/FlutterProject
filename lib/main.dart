@@ -60,9 +60,10 @@ class MyApp extends StatelessWidget {
     GlobalWidgetsLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
   ],
+
+  
   supportedLocales: [
     const Locale('ar', 'AE'), // English, no country code
-   
   ],
     debugShowCheckedModeBanner: false,
       theme: ThemeData(

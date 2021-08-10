@@ -116,6 +116,8 @@ List <String> values=[
     var width = MediaQuery.of(context).size.width;
      return Scaffold(
         drawer: AppDrawer(
+                       idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
+
              ),
       appBar:AppBar(
             // backgroundColor: Color(0xFFF5CEB8),
@@ -229,7 +231,7 @@ List <String> values=[
                       
                        controller: _name,
                         textAlign: TextAlign.right,
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.text,
                          
                         decoration: InputDecoration(
                           hintStyle: TextStyle(

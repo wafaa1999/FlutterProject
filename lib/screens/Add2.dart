@@ -180,7 +180,7 @@ class _AddTable2State extends State<AddTable2> {
     var width = MediaQuery.of(context).size.width;
      return Scaffold(
         drawer: AppDrawer(
-            //  idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
+             idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
              ),
       appBar:AppBar(
             // backgroundColor: Color(0xFFF5CEB8),
@@ -248,7 +248,7 @@ class _AddTable2State extends State<AddTable2> {
                             print(toTime1);
                            
 
-                          Navigator.push(
+                          Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute<void>(
                                         builder: (BuildContext context) =>
@@ -736,16 +736,11 @@ class _AddTable2State extends State<AddTable2> {
      Future addnew2 () async {
          String timeSlot = "";
       
-         timeSlot += time.hour.toString();
-         timeSlot += ':';
-         timeSlot += time.minute.toString();
-         timeSlot += '/';
+         timeSlot += getText();
 
-        String time2= getText3();
-        List<String> finalTime = time2.split(':');
-        timeSlot += finalTime[0];
-         timeSlot += ':';
-         timeSlot += finalTime[1];
+       
+         timeSlot += '/';
+         timeSlot += getText2();
          timeSlot += '/';
          List<String> days = [];
          if(day1 == true){
@@ -799,6 +794,7 @@ class _AddTable2State extends State<AddTable2> {
           return 1;
 
     }
+ 
   Future getalldata2() async {
     String id = '60ddc9735b4d43f8eaaabf83';
     years.clear();

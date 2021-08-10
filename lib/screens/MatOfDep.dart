@@ -54,6 +54,7 @@ class _ShowTable1State extends State<ShowTable1> {
      @override
      void initState() { 
        super.initState();
+
        for(int i =0 ; i<widget.courses.length;i++){
         tables.add(Table1(widget.courses[i],widget.inst[i],widget.rooms[i]));
         print("'yes'");
@@ -62,7 +63,7 @@ class _ShowTable1State extends State<ShowTable1> {
      }
      
     Future getalldata() async {
-    String id = '60ddc9735b4d43f8eaaabf83';
+    String id = widget.idDep;
 
     String apiUrl = "https://core-graduation.herokuapp.com/getMatOfSpeDep?idDep=$id&id=$id";
     String apiUrl2 = "https://core-graduation.herokuapp.com/getAllIsn?idDep=$id";
@@ -132,13 +133,14 @@ class _ShowTable1State extends State<ShowTable1> {
     
 
       }
+      
 
   @override
   Widget build(BuildContext context) {
     t = 0;
     return Scaffold(
        drawer: AppDrawer(
-            //  idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
+             idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
              ),
             appBar:AppBar(
             // backgroundColor: Color(0xFFF5CEB8),
@@ -431,14 +433,16 @@ class _ShowTable1State extends State<ShowTable1> {
               
               Container(
                 // width: MediaQuery.of(context).size.width * 0.05,
-                child: Text('$cell',style: GoogleFonts.amiri(
-                                    fontSize: 15,
-                                    color:Color.fromRGBO(64, 128, 128, 1),
-                                      
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.7),
-                                textAlign: TextAlign.center,),
-              ),
+                
+                  child: Text('$cell',style: GoogleFonts.amiri(
+                                      fontSize: 15,
+                                      color:Color.fromRGBO(64, 128, 128, 1),
+                                        
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.7),
+                                  textAlign: TextAlign.center,),
+                ),
+              
               
               // showEditIcon: true,
            
@@ -456,7 +460,7 @@ List<DataColumn> getColumns(List<String> columns) {
       return DataColumn(
         
         label: Padding(
-          padding: EdgeInsets.all(10),
+          padding: widget.courses.isEmpty?EdgeInsets.fromLTRB(20, 0, 25, 0): EdgeInsets.all(10.0),
           child: Text(column, style: GoogleFonts.amiri(
                                     fontSize: 18,
                                     color:Colors.white,
@@ -476,6 +480,7 @@ Future deleteFunction()async{
      for(int i=0;i< selected.length;i++){
 
    String apiUrl = "https://core-graduation.herokuapp.com/deleteFromSaveMatOfDraft?tableName=${widget.tablename}&depId=${widget.idDep}&courseIns=${selected[i].inst}&courseName=${selected[i].course}&flag=0&timeSlot=0&roomType=${selected[i].room}&date=${widget.year}";
+   print(apiUrl);
   final response =
         await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {

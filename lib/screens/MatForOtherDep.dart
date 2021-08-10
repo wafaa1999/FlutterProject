@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graduationproject/screens/Add1.dart';
 import 'package:graduationproject/screens/Add2.dart';
+import 'package:graduationproject/screens/Add3.dart';
 import 'package:graduationproject/screens/AddNewRoom.dart';
 import 'package:graduationproject/widgets/alertDialg.dart';
 import 'package:graduationproject/widgets/drawer1.dart';
@@ -12,32 +13,35 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 
-class ShowTable2 extends StatefulWidget {
+class ShowTable3 extends StatefulWidget {
 
 final String idDep;
 final String depName;
 final String instName;
 final String tablename;
 final String year;
-final List<String> deprtments;
+// final List<String> deprtments;
 final List<String> courses;
-final List<String> yearOfStuding;
+// final List<String> yearOfStuding;
 final List<String> days;
 final List<String> fromTime;
 final List<String> toTime;
+final List<String> inst;
+final List<String> room;
+
+  const ShowTable3({Key key, this.idDep, this.depName, this.instName, this.tablename, this.year, this.courses, this.days, this.fromTime, this.toTime, this.inst, this.room}) : super(key: key);
 
 
-  const ShowTable2({Key key, this.idDep, this.depName, this.instName, this.tablename, this.courses, this.yearOfStuding, this.year, this.days, this.fromTime, this.toTime, this.deprtments}) : super(key: key);
 
 
 
 
 
   @override
-  _ShowTable2State createState() => _ShowTable2State();
+  _ShowTable3State createState() => _ShowTable3State();
 }
 
-class _ShowTable2State extends State<ShowTable2> {
+class _ShowTable3State extends State<ShowTable3> {
     //  List<String> courses = ['برمجه الحاسوب','خوارزميتات'];
     //  List<String> inst = ['عماد النتشة','منى ضميدي'];
     //  List<String> rooms = ["مختبر البيك","مختبر متحكمات دقيقة "];
@@ -54,9 +58,12 @@ class _ShowTable2State extends State<ShowTable2> {
      List<String> allInst = [];
      List<String> allRooms = [];
      List<String> depNames = [];
-     List<String> idDep = [];
+    //  List<String> idDep = [];
+    List<String> courses = [];
+    List<String> instNames = [];
+    List<String> labs = [];
 
-     final columns =['القسم',' المساق','السنة','الوقت'];
+     final columns =['اسم المساق','اسم المدرس','نوع القاعة','الوقت'];
 
      @override
      void initState() { 
@@ -68,9 +75,9 @@ class _ShowTable2State extends State<ShowTable2> {
   // final String toTime;
   // final String year;
        for(int i =0 ; i<widget.courses.length;i++){
-        tables.add(Table1(widget.courses[i],widget.deprtments[i],widget.days[i]+'\n'+widget.fromTime[i]+" - "+widget.toTime[i],widget.yearOfStuding[i],widget.fromTime[i],widget.toTime
-        [i],widget.days[i]));
-        print("'yes'");
+        tables.add(Table1(widget.courses[i],widget.inst[i],widget.days[i]+'\n'+widget.fromTime[i]+" - "+widget.toTime[i],widget.fromTime[i],widget.toTime
+        [i],widget.days[i],widget.room[i]));
+        // print("'yes'");
      }
 
      }
@@ -78,33 +85,6 @@ class _ShowTable2State extends State<ShowTable2> {
      Future deleteFunction()async{
        
 
-  
-//      for(int i=0;i< selected.length;i++){
-//        String timeSlot = "";
-
-//       //  timeSlot += selected[i].days;
-//       //  timeSlot += selected[i].days;
-//        print(timeSlot);
-//       timeSlot= selected[i].fromTime +"/"+selected[i].toTime+"/"+selected[i].daysName;
-
-
-//    String apiUrl = "https://core-graduation.herokuapp.com/deleteFromSaveMatOfDraft?tableName=${widget.tablename}&depId=${widget.idDep}&courseIns=0&courseName=${selected[i].course}&flag=1&timeSlot=$timeSlot&roomType=0&date=${widget.year}";
-//  print(apiUrl);
- 
-//   final response =
-//         await http.get(Uri.parse(apiUrl));
-//     if (response.statusCode == 200) {
-//       Map decoded = json.decode(response.body) ; 
-//       print("-************");
-//       // print(decoded['response'][0]['state']);
-//       print("////////////////");
-      
-    
-//     }
-    
-  
-
-// }
 
      for(int i=0;i< selected.length;i++){
        print('len');
@@ -119,7 +99,7 @@ class _ShowTable2State extends State<ShowTable2> {
      String timeSlot="${time}/${time1}/${time2}";
     //  selected[i].fromTime +"/"+selected[i].toTime+"/"+selected[i].daysName;
      print(timeSlot);
-      String o = "12:00/13:00/سبت";
+      String o = "08:00/09:00/احد,ثلاثاء,خميس";
 
       if (timeSlot == o){
         print("yes1");
@@ -128,7 +108,7 @@ class _ShowTable2State extends State<ShowTable2> {
       else print("no1");
 
 
-   String apiUrl = "https://core-graduation.herokuapp.com/deleteFromSaveMatOfDraft?tableName=${widget.tablename}&depId=${widget.idDep}&courseIns=0&courseName=${selected[i].course}&flag=1&timeSlot=${timeSlot}&roomType=0&date=${widget.year}";
+   String apiUrl = "https://core-graduation.herokuapp.com/deleteFromSaveMatOfDraft?tableName=${widget.tablename}&depId=${widget.idDep}&courseIns=${selected[i].inst}&courseName=${selected[i].course}&flag=2&timeSlot=${timeSlot}&roomType=${selected[i].room}&date=${widget.year}";
   print(apiUrl);
   final response =
         await http.get(Uri.parse(apiUrl));
@@ -149,10 +129,18 @@ selected.clear();
 
 
 }
-    Future getdep() async {
-    String id = '60ddc9735b4d43f8eaaabf83';
-    String apiUrl = "https://core-graduation.herokuapp.com/getAllDep";
-    final response =
+
+       Future getalldata() async {
+    String id = widget.idDep;
+
+    String apiUrl = "https://core-graduation.herokuapp.com/getMatOfSpeDep?idDep=$id&id=$id";
+    String apiUrl2 = "https://core-graduation.herokuapp.com/getAllIsn?idDep=$id";
+     String apiUrl3 = "https://core-graduation.herokuapp.com/getRoomCat?idDep=$id";
+
+   for(int i =0;i< 3 ; i++){
+    
+    if (i ==0){
+ final response =
         await http.get(Uri.parse(apiUrl));
         
     if (response.statusCode == 200) {
@@ -161,28 +149,59 @@ selected.clear();
         print(decoded['response'].length);
 
      for(int i =0; i<decoded['response'].length; i++){
-       idDep.add(decoded['response'][i]['idDepartment']); 
-       depNames.add(decoded['response'][i]['name']); 
-       
-
+       courses.add(decoded['response'][i]['name']); 
       
        }
-       idDep.add('0');
-       depNames.add('لم يتم اختياره');
-   print(idDep);
-   print(depNames);
-  
+   print(courses);
         
-       
+       }
     }
-    return 1;
+    else  if (i == 1){
+ final response1 =
+        await http.get(Uri.parse(apiUrl2));
+        
+    if (response1.statusCode == 200) {
+  
+        Map decoded = json.decode(response1.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       instNames.add(decoded['response'][i]['name']); 
+      
+       }
+   print(instNames);
+        
+       }
+    }
+    else  if (i == 2){
+ final response2 =
+        await http.get(Uri.parse(apiUrl3));
+        
+    if (response2.statusCode == 200) {
+  
+        Map decoded = json.decode(response2.body) as Map<String, dynamic>;
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       labs.add(decoded['response'][i]['name']); 
+      
+       }
+   print(labs);
+        
+       }
+    }
+   
+   
 
    }
  
     
-
+    return 1 ;
 
     
+
+      }
+
 
 
   @override
@@ -193,7 +212,6 @@ selected.clear();
              idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
              ),
             appBar:AppBar(
-
             // backgroundColor: Color(0xFFF5CEB8),
             title: Text(
                               "مساقات من قسم اخر",
@@ -299,20 +317,24 @@ selected.clear();
 
                     
                       onTap:()async{
-                       int responce = await getdep();
+                       int responce = await getalldata();
                         if(responce == 1){
+                          instNames.add('لم يتم اختياره');
+                          courses.add('لم يتم اختياره');
+                          labs.add('لم يتم اختياره');
                         Navigator.pushReplacement(
                         context,
                         MaterialPageRoute<void>(
                           builder: (BuildContext context) =>
-                             AddTable2(
+                             AddTable3(
                           instName: widget.instName,
                           depName: widget.depName,
                           idDep:widget.idDep,
                           year:widget.year,
                           tablename: widget.tablename,
-                          depNames:depNames,
-                          idDeps:idDep,
+                          intName:instNames,
+                          courese:courses,
+                          labs: labs,
                           // inst:allInst
 
                             
@@ -348,8 +370,8 @@ selected.clear();
                        setState(() {
                           for(int i =0 ;i<selected.length;i++){
                                 for(int j =0 ;j<tables.length; j++){
-                                   if (tables[j].course == selected[i].course  && tables[j].days == selected[i].days && tables[j].dep == selected[i].dep
-                                         && tables[j].year == selected[i].year){
+                                   if (tables[j].course == selected[i].course  && tables[j].days == selected[i].days 
+                                         && tables[j].inst == selected[i].inst){
                                            tables.removeAt(j);
                                       }
                                           }
@@ -436,7 +458,7 @@ selected.clear();
               
 
       
-      dataRowHeight: 70,
+      dataRowHeight: 75,
       
       headingRowHeight: 60,
       horizontalMargin: 1,
@@ -451,7 +473,7 @@ selected.clear();
 }
 
  List<DataRow> getRows(List<Table1> tables) => tables.map((Table1 table) {
-        final cells = [table.dep,table.course,table.year, table.days];
+        final cells = [table.course,table.inst,table.room, table.days];
 
 
 
@@ -488,7 +510,7 @@ selected.clear();
               
               
               Container(
-                width:delete?index !=2?MediaQuery.of(context).size.width /3.6: 25:index !=2?MediaQuery.of(context).size.width /3.5: 25,
+                width:delete?MediaQuery.of(context).size.width /4.5: MediaQuery.of(context).size.width /4,
                 // width: MediaQuery.of(context).size.width * 0.05,
                 child: Padding(
                   padding: index ==0?delete?const EdgeInsets.fromLTRB(0, 0, 15, 0):const EdgeInsets.fromLTRB(0, 0, 20, 0):delete?const EdgeInsets.fromLTRB(0, 0, 0, 0):const EdgeInsets.fromLTRB(0, 0, 2, 0),
@@ -518,8 +540,8 @@ List<DataColumn> getColumns(List<String> columns) {
       return DataColumn(
         
         label: Padding(
-          padding:widget.courses.isEmpty?EdgeInsets.fromLTRB(25, 0, 30, 0)
-          : column =='القسم'?delete?const EdgeInsets.fromLTRB(0, 0, 30, 0):const EdgeInsets.fromLTRB(0, 0, 30, 0):column =='الوقت'?const EdgeInsets.fromLTRB(0, 0, 30, 0):const EdgeInsets.all(2.0),
+          padding: widget.courses.isEmpty?const EdgeInsets.all(15)
+          :delete?const EdgeInsets.fromLTRB(0, 0, 22, 0):column=='اسم المساق'?const EdgeInsets.fromLTRB(0, 0, 30, 0):const EdgeInsets.fromLTRB(0, 0, 20, 0),
           child: Text(column, style: GoogleFonts.amiri(
                                     fontSize: 18,
                                     color:Colors.white,
@@ -542,17 +564,18 @@ List<DataColumn> getColumns(List<String> columns) {
 
 class Table1{
   final String course;
-  final String dep;
-  
+  // final String dep;
+  final String inst;
   final String days;
  
-  final String year;
+  // final String year;
   
   final String fromTime;
   final String toTime;
   final String daysName;
+  final String room;
 
-  Table1(this.course,  this.dep, this.days, this.year, this.fromTime, this.toTime, this.daysName);
+  Table1(this.course,  this.inst, this.days,this.fromTime, this.toTime, this.daysName, this.room);
 
  
 
@@ -566,15 +589,15 @@ class Table1{
       other is Table1 &&
           runtimeType == other.runtimeType &&
           course == other.course &&
-          year == other.year &&
-          dep == other.dep &&
+          room == other.room &&
+          inst == other.inst &&
           days == other.days;
           //  &&
           // fromTime == other.fromTime &&
           // toTime == other.toTime;
 
   @override
-  int get hashCode => course.hashCode ^dep.hashCode^days.hashCode^year.hashCode;
+  int get hashCode => course.hashCode ^inst.hashCode^days.hashCode;
 }
 
 

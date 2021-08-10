@@ -27,6 +27,8 @@ class _Login extends State<Login> {
   void initState() { 
     super.initState();
     // wafaa();
+  
+
      _username.addListener(() {
        setState(() {
          
@@ -373,24 +375,8 @@ class _Login extends State<Login> {
     
   }
 
-//   Future wafaa() async {
-
-  
     
-//     final String apiUrl = "http://192.168.1.7:3015/wafaa?";
-//      EasyLoading.show(status: '');
-//      List<String> name = ['wafaa','wafaa'];
-//      List<String> numb = ['1','2'];
-     
-//     final response =
-//         await http.post(Uri.parse(apiUrl),body: {"name":name,"num":numb});
-//     if (response.statusCode == 200) {
-//         Map decoded = json.decode(response.body) as Map<String, dynamic>;
-//         print(decoded);
- 
-   
-//   }
-// }
+    
 }
 
  

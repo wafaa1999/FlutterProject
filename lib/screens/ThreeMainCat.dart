@@ -1,6 +1,9 @@
 
 import 'dart:io';
+import 'package:graduationproject/screens/MatForOtherDep.dart';
 import 'package:graduationproject/screens/MatOfOtherDep.dart';
+import 'package:graduationproject/screens/instSoftConst.dart';
+import 'package:graduationproject/screens/showtables.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -47,6 +50,10 @@ class _ShowcatState extends State<Showcat> {
   List<String> depNames = [];
   List<String> depsId = [];
   List<String> dep =[];
+  List<String> status = [];
+  List<String> notes = [];
+    List<String> tableNames = [];
+
 
   Future getdep() async {
 
@@ -174,22 +181,180 @@ class _ShowcatState extends State<Showcat> {
 
       }
 
+  Future getalldata3() async {
+   
+    String id = '60ddc9735b4d43f8eaaabf83';
+    years.clear();
+    course2.clear();
+    fromTime1.clear();
+    toTime1.clear();
+    days1.clear();
+    dep.clear();
+    inst1.clear();
+    room1.clear();
+
+    List<String> arr =[];
+    String time = "";
+
+    String apiUrl = "https://core-graduation.herokuapp.com/getFromDraft?idDep=${widget.idDep}&tableName=${widget.tableName}";
+    print(apiUrl);
+ final response =
+        await http.get(Uri.parse(apiUrl));
+        print(response.statusCode);
+        
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+      if(decoded['response'][i]['fromOtherDep']== 'false' && decoded['response'][i]['toOtherDep']== 'true' ){
+
+      
+       years.add(decoded['response'][i]['year']); 
+       course2.add(decoded['response'][i]['courseName']); 
+       time = decoded['response'][i]['timeSolt'];
+       inst1.add(decoded['response'][i]['courseIns']);
+       room1.add(decoded['response'][i]['roomType']);
+       print(time);
+     
+         arr = time.split('/');
+         fromTime1.add(arr[0]);
+         toTime1.add(arr[1]);
+         days1.add(arr[2]);
+         print (arr[0]);     
+      }
+     }     
+    }
+    return 1 ;
+
+    
+
+      }
+  
+  Future getalldata4() async {
+    notes.clear();
+    inst1.clear();
+    status.clear();
+    fromTime1.clear();
+    toTime1.clear();
+    days1.clear();
+    String id = '60ddc9735b4d43f8eaaabf83';
+
+    String apiUrl = "https://core-graduation.herokuapp.com/getSoftConst?idDep=${widget.idDep}";
+ final response =
+        await http.get(Uri.parse(apiUrl));
+        
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+            inst1.add(decoded['response'][i]['insName']); 
+            status.add(decoded['response'][i]['need']); 
+            notes.add(decoded['response'][i]['note']);
+      List<String> time = [] ;
+      String one = decoded['response'][i]['time'];
+      print(one);
+      time = one.split('/');
+      toTime1.add(time[1]);
+      fromTime1.add(time[0]);
+      days1.add(time[2]);
+
+     
+       }
+   print(inst1);
+   print(status);
+   print(notes);
+}
+    return 1 ;
+
+    
+
+      }
+  
+  Future getalltables() async {
+    tableNames.clear();
+    status.clear();
+    years.clear();
+
+    print(widget.idDep);
+    final String apiUrl = "https://core-graduation.herokuapp.com/getTables?idDep=${widget.idDep}";
+    final response =
+        await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       tableNames.add(decoded['response'][i]['name']);  
+       status.add(decoded['response'][i]['status']);
+       years.add(decoded['response'][i]['year']);
+
+      
+       }
+     print(tableNames);
+     print(status);
+        
+       }
+    return 1 ;
+
+    
+
+      }
+    
+    
   @override
   Widget build(BuildContext context) {
     return Scaffold( drawer: AppDrawer(
-            //  idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
+             idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
              ),
             appBar:AppBar(
             // backgroundColor: Color(0xFFF5CEB8),
-            title: Text(
-                              "${widget.tableName}",
-                              style: GoogleFonts.amiri(
-                                  fontSize: 20,
-                                  color:Colors.white,
-                                    
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.7),
-                              textAlign: TextAlign.center,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children:[ Text(
+                                "${widget.tableName}",
+                                style: GoogleFonts.amiri(
+                                    fontSize: 20,
+                                    color:Colors.white,
+                                      
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.7),
+                                textAlign: TextAlign.center,
+                              ),
+                                
+                                  //  padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+                                    IconButton(icon: Icon(Icons.arrow_back_ios_outlined,color: Colors.white,size: 25,), onPressed: ()async{
+                                        int responce = await getalltables();
+                           if(responce == 1){
+                           
+
+                            Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                         AllTableshow(
+                                        idDep:widget.idDep,
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+                                        tablenames:tableNames,
+                                        status:status,
+                                        year:years 
+                                      ),
+                                    ),
+                                  ); 
+                           }
+
+                                  
+
+                                   }),
+                                ]
+
+        
                             ),
             flexibleSpace: Container(
               decoration: BoxDecoration(
@@ -212,6 +377,7 @@ class _ShowcatState extends State<Showcat> {
             ),
             
             elevation: 0,
+            
 
 
           
@@ -362,32 +528,138 @@ class _ShowcatState extends State<Showcat> {
                Center(
                   // child: Padding(
                     // padding: const EdgeInsets.all(10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                             border: Border.all(color: Color.fromRGBO(212, 172, 13,1,),width: 3),
-                              gradient: new LinearGradient(
-                                  colors: [Colors.white,
-                                 Colors.white] ),
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 4,
-                                    color: Color.fromRGBO(33, 84, 84, 1),
-                                    offset: Offset(2, 2))
-                              ],
-                              ),
-                      
-                    height:MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child:Center(child: Text("مواد لقسم أخر  ", style: GoogleFonts.amiri(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.7),
-                          textAlign: TextAlign.center,)),),
+                    child: InkWell(
+                      onTap: ()async{
+                      int res = await getalldata3();
+                          if(res == 1)
+                          {
+                            // print(dep);
+                            print(course2);
+                            print(years);
+                            print(days1);
+                            print(fromTime1);
+                            print(toTime1);
+                            print(room1);
+                           
+
+                          Navigator.push(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (BuildContext context) =>
+                                           ShowTable3(
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+                                        idDep:widget.idDep,
+                                        tablename: widget.tableName,
+                                        year:widget.year,
+                                        // deprtments: dep,
+
+                                        courses:course2,
+                                        // yearOfStuding:years ,
+                                        days:days1,
+                                        fromTime:fromTime1,
+                                        toTime:toTime1,
+                                        inst:inst1,
+                                        room: room1,
+
+                                          
+
+                                        ),
+                                      ),
+                                    );
+                          }
+
+                      },
+                                          child: Container(
+                        decoration: BoxDecoration(
+                               border: Border.all(color: Color.fromRGBO(212, 172, 13,1,),width: 3),
+                                gradient: new LinearGradient(
+                                    colors: [Colors.white,
+                                   Colors.white] ),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 4,
+                                      color: Color.fromRGBO(33, 84, 84, 1),
+                                      offset: Offset(2, 2))
+                                ],
+                                ),
+                        
+                      height:MediaQuery.of(context).size.height * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child:Center(child: Text("مواد لقسم أخر  ", style: GoogleFonts.amiri(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.7),
+                            textAlign: TextAlign.center,)),),
+                    ),
                   ),
                 // ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.08,),
+              Center(
+                  // child: Padding(
+                    // padding: const EdgeInsets.all(10),
+                    child: InkWell(
+                      onTap: ()async{
+                      int res = await getalldata4();
+                          if(res == 1)
+                          {
+                    
+                          Navigator.push(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (BuildContext context) =>
+                                           ShowTable4(
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+                                        idDep:widget.idDep,
+                                        tablename: widget.tableName,
+                                        year:widget.year,
+                                        // deprtments: dep,
+
+                                        status:status,
+                                        // yearOfStuding:years ,
+                                        days:days1,
+                                        fromTime:fromTime1,
+                                        toTime:toTime1,
+                                        instNames:inst1,
+                                        notes: notes,
+
+                                          
+
+                                        ),
+                                      ),
+                                    );
+                          }
+
+                      },
+                                          child: Container(
+                        decoration: BoxDecoration(
+                               border: Border.all(color: Color.fromRGBO(212, 172, 13,1,),width: 3),
+                                gradient: new LinearGradient(
+                                    colors: [Colors.white,
+                                   Colors.white] ),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 4,
+                                      color: Color.fromRGBO(33, 84, 84, 1),
+                                      offset: Offset(2, 2))
+                                ],
+                                ),
+                        
+                      height:MediaQuery.of(context).size.height * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child:Center(child: Text("مواعيد المدرسين", style: GoogleFonts.amiri(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.7),
+                            textAlign: TextAlign.center,)),),
+                    ),
+                  ),
+                // ),
               Center(
                       child: InkWell(
                                               child: Container(

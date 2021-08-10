@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graduationproject/screens/AddNewTable.dart';
 import 'package:graduationproject/screens/ThreeMainCat.dart';
+import 'package:graduationproject/screens/showFinalTable.dart';
 import 'package:graduationproject/widgets/drawer1.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -49,6 +50,33 @@ class _AllTableshowState extends State<AllTableshow> {
     
   }
   
+Future deleteFunction(String tableName)async{
+
+  
+  
+
+   String apiUrl = "https://core-graduation.herokuapp.com/deleteTable?name=${tableName}&idDep=${widget.idDep}";
+   print(apiUrl);
+  final response =
+        await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      Map decoded = json.decode(response.body) ; 
+      print("-************");
+      // print(decoded['response'][0]['state']);
+      print("////////////////");
+      
+    
+    }
+    
+  
+
+
+
+
+
+}
+
+
   
 
   
@@ -56,7 +84,7 @@ class _AllTableshowState extends State<AllTableshow> {
   Widget build(BuildContext context) {
     return Scaffold(
             drawer: AppDrawer(
-            //  idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
+             idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
              ),
             appBar:AppBar(
             
@@ -135,7 +163,31 @@ class _AllTableshowState extends State<AllTableshow> {
 
     switch(item){
       case MenuItem.itemEdit:
-      print(items[index].title);
+         items[index].type =='done'?
+          Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                         ShowFinalTable(
+
+                                        idDep:widget.idDep,
+                                        instName:widget.instName,
+                                        depName:widget.depName,
+                                         tableName:items[index].title,
+                                        year: items[index].year,
+                                        courseNumbers :[],
+                                        courseNames :[],
+                                        insts:[],
+                                        room:[],
+                                        roomtype:[],
+                                        fromTime:[],
+                                        toTime:[],
+                                        days:[],
+      
+                                      ),
+                                    ),
+                                  )
+         :
         Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute<void>(
@@ -160,10 +212,10 @@ class _AllTableshowState extends State<AllTableshow> {
       
          setState(() {
           //  wafaa = !wafaa;
+          deleteFunction(items[index].title
+          );
            items.removeAt(index);
-       for(int i =0;i<items.length; i++){
-         print(items[i].title);
-         }
+           
             });
      
       break;
@@ -177,6 +229,7 @@ void onSelected1(BuildContext context,MenuItem1 item,index){
 
     switch(item){
       case MenuItem1.itemAdded:
+      
           Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute<void>(
@@ -198,11 +251,14 @@ void onSelected1(BuildContext context,MenuItem1 item,index){
       case MenuItem1.itemDelete:
       
          setState(() {
+              setState(() {
           //  wafaa = !wafaa;
+          deleteFunction(items[index].title
+          );
            items.removeAt(index);
-       for(int i =0;i<items.length; i++){
-         print(items[i].title);
-         }
+           
+            });
+     
             });
      
       break;

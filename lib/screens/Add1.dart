@@ -60,7 +60,7 @@ class _AddTable1State extends State<AddTable1> {
     var width = MediaQuery.of(context).size.width;
      return Scaffold(
         drawer: AppDrawer(
-            //  idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
+             idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
              ),
       appBar:AppBar(
             // backgroundColor: Color(0xFFF5CEB8),
@@ -404,6 +404,7 @@ class _AddTable1State extends State<AddTable1> {
                           
                           int response = await addnew1();
                            if (response == 1){
+                             changeStatus();
                              Dialog alert = showAlert(context,'تمت الاضافة ',0);
                           showDialog(
                             context: context,
@@ -525,25 +526,29 @@ class _AddTable1State extends State<AddTable1> {
  
  
 
-//  Future saved () async {
-//    String id = widget.idDep;
+Future changeStatus () async {
+   String id = widget.idDep;
 
-//     // final String apiUrl = 
-//     // "https://core-graduation.herokuapp.com/saveMatOfDraft?depId=${widget.idDep}&tableName=${widget.year}&courseIns=$instSelected&courseName=$courseSelected&flag=$flag&timeSlot=$timeSlot&roomType=$roomSelected";
-//     final String apiUrl = 
-//     "https://core-graduation.herokuapp.com/getFromDraft?idDep=${id}";
+    final String apiUrl = 
+    "https://core-graduation.herokuapp.com/changeStatus?idDep=${id}&tableName=${widget.tablename}&status=draft";
     
-//     print(apiUrl);
-//     final response =
-//         await http.get(Uri.parse(apiUrl));
-//     if (response.statusCode == 200) {
-//         Map decoded = json.decode(response.body) as Map<String, dynamic>;
-//         print(decoded['response'][0]);
+    print(apiUrl);
+    final response =
+        await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;
+        // print(decoded['response'][0]);
         
-//       }
+      }
 
-//       return 1;
-//     }
+    }
+ 
+
+
+  
+
+
+
  
 
 

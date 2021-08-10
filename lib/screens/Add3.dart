@@ -7,7 +7,20 @@ import 'package:graduationproject/widgets/drawer1.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'MatForOtherDep.dart';
+
 class AddTable3 extends StatefulWidget {
+    final String instName;
+  final String idDep;
+  final String depName;
+  final String year;
+  final String tablename;
+  final List<String> intName;
+  final List<String> courese;
+  final List<String> labs;
+
+  const AddTable3({Key key, this.instName, this.idDep, this.depName, this.year, this.tablename, this.intName, this.courese, this.labs}) : super(key: key);
+  
    
 
   @override
@@ -17,63 +30,11 @@ class AddTable3 extends StatefulWidget {
 class _AddTable3State extends State<AddTable3> {
       
       
-      Future getMat() async {
-        names.clear();
-        names.add('لم يتم اختياره');
-
-      
-        String id ;
-        print(depSelected);
-          String apiUrl;
-        if(depSelected =='هندسة حاسوب'){
-        String one ='60ddc9735b4d43f8eaaabf83';
-         apiUrl = "https://core-graduation.herokuapp.com/getMatOfSpeDep?idDep=$one&id=60ddc9735b4d43f8eaaabf83";}
-        if(depSelected =='هندسة الاتصالات'){
-        String two = '60ddc8e95b4d43f8eaaabf7d';
-         apiUrl = "https://core-graduation.herokuapp.com/getMatOfSpeDep?idDep=$two&id=60ddc9735b4d43f8eaaabf83";}
-
-         print(apiUrl);
-         print("*////");
-        // if (flag == '1')
-        // id =one;
-        //  else id = two;
-
-         print(getText());
-         print(getText2());
-
    
     
-    final response =
-        await http.get(Uri.parse(apiUrl));
-    if (response.statusCode == 200) {
-        Map decoded = json.decode(response.body) as Map<String, dynamic>; 
-
-     for(int i =0; i<decoded['response'].length; i++){
-       names.add(decoded['response'][i]['name']);  
-      
-
-       }
- print(names);
- updateCourse(names);
-    
-
-    
-
-      }
-
-    
-     
-    
-    }
-
- 
-    
     //  String couresSelected;
-     String depSelected= "لم يتم اختياره";
-     String instSelectd;
+     String instSelectd = "لم يتم اختياره";
      String courseSelected = "لم يتم اختياره";
-     List<String> names=['لم يتم اختياره'];
-     List<String> dep=['هندسة حاسوب','هندسة الاتصالات',"لم يتم اختياره"];
      List<String> course=[];
      List<String> inst = [];
      bool day1 =false;
@@ -82,16 +43,16 @@ class _AddTable3State extends State<AddTable3> {
      bool day4 =false;
      bool day5 =false;
      bool day6 =false;
-
-  
-
-     updateCourse(List <String> value){
-       setState(() {
-         course =value;
-       });
-     }
-     
-
+      List <String> course2 = [];
+      List <String> toTime1 = [];
+      List <String> days1 = [];
+      List <String> inst1 = [];
+      List <String> room1 = [];
+      List<String> fromTime1 = [];
+      bool show = false;
+      String labSelected = 'لم يتم اختياره';
+      int _value = 0;
+ 
      
      
 
@@ -142,7 +103,7 @@ bool select2 = false;
     var width = MediaQuery.of(context).size.width;
      return Scaffold(
         drawer: AppDrawer(
-            //  idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
+             idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
              ),
       appBar:AppBar(
             // backgroundColor: Color(0xFFF5CEB8),
@@ -197,7 +158,46 @@ bool select2 = false;
                           
                           child: IconButton(icon: Icon(Icons.close),color: Color.fromRGBO(64, 128, 128, 1),
                           alignment: Alignment.bottomLeft, 
-                          onPressed:(){}),
+                          onPressed:()async{
+                            int res = await getalldata3();
+                          if(res == 1)
+                          {
+                            // print(dep);
+                            print(course2);
+                            // print(years);
+                            print(days1);
+                            print(fromTime1);
+                            print(toTime1);
+                            print(room1);
+                           
+
+                          Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (BuildContext context) =>
+                                           ShowTable3(
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+                                        idDep:widget.idDep,
+                                        tablename: widget.tablename,
+                                        year:widget.year,
+                                        // deprtments: dep,
+
+                                        courses:course2,
+                                        // yearOfStuding:years ,
+                                        days:days1,
+                                        fromTime:fromTime1,
+                                        toTime:toTime1,
+                                        inst:inst1,
+                                        room: room1,
+
+                                          
+
+                                        ),
+                                      ),
+                                    );
+                          }
+                          }),
                         
                 
 
@@ -207,73 +207,7 @@ bool select2 = false;
           ),
           SizedBox(height :height *0.03),
 
-           Row(
-            children: [
-              SizedBox(height :height *0.03),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Container(
-           
-                  child: Text("اسم القسم",style: GoogleFonts.amiri(
-                                      fontSize: 18,
-                                      color:Colors.black,
-                                        
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.7),),
-                ),
-              ),
-
-
-
-
-                 Padding(
-                padding: const EdgeInsets.fromLTRB(10, 10, 20, 10),
-                child: Container(
-                  // width:width *0.1,
-                  child: DropdownButton<String>(
-                    
-                     value: depSelected,
-                     hint: Text("اختر اسم القسم"),
-                    dropdownColor: Color.fromRGBO(206, 222, 222, 1),
-                    elevation: 5,
-                    iconSize: 30,
-                   style: TextStyle(
-                                            fontSize: 16,
-                                            color:Colors.black,
-                                              
-                                            // fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.7),
-
-                    items: dep.map((String dropDown){
-
-                      return DropdownMenuItem<String>(
-                        
-                        value: dropDown,
-                        child:Text(dropDown) ,
-                      );
-                      
-                    }).toList(),
-                    onChanged:(value){
-                      
-                      
-                      setState(() {
-                        depSelected = value;
-                        courseSelected ="لم يتم اختياره";
-                        
-
-                      });
-                      getMat() ;
-                    } ,
-
-                   
-
-                  ),
-                ),
-              ),
-         ],
-
-          ),
-          
+      
         Padding(
              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
              child: Row(children: [
@@ -292,7 +226,7 @@ bool select2 = false;
                   // width:width *0.1,
                   child: DropdownButton<String>(
                     
-                     value: courseSelected,
+                     value:courseSelected,
                      hint: Text("اختر اسم المساق"),
                     dropdownColor: Color.fromRGBO(206, 222, 222, 1),
                     elevation: 5,
@@ -304,7 +238,7 @@ bool select2 = false;
                                             // fontWeight: FontWeight.bold,
                                             letterSpacing: 1.7),
 
-                    items: names.map((String dropDown){
+                    items: widget.courese.map((String dropDown){
 
                       return DropdownMenuItem<String>(
                         
@@ -326,11 +260,11 @@ bool select2 = false;
               ),
          ],),
            ),
-        
-         Padding(
-             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+       
+        Padding(
+             padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
              child: Row(children: [
-               Text("السنة الدراسية",style: GoogleFonts.amiri(
+               Text("اسم المدرس",style: GoogleFonts.amiri(
                                               fontSize: 18,
                                               color:Colors.black,
                                                 
@@ -345,8 +279,8 @@ bool select2 = false;
                   // width:width *0.1,
                   child: DropdownButton<String>(
                     
-                     value: instSelectd,
-                     hint: Text("اختر السنة الدراسية"),
+                     value:instSelectd,
+                     hint: Text("اختر اسم المدرس"),
                     dropdownColor: Color.fromRGBO(206, 222, 222, 1),
                     elevation: 5,
                     iconSize: 30,
@@ -357,7 +291,7 @@ bool select2 = false;
                                             // fontWeight: FontWeight.bold,
                                             letterSpacing: 1.7),
 
-                    items: inst.map((String dropDown){
+                    items: widget.intName.map((String dropDown){
 
                       return DropdownMenuItem<String>(
                         
@@ -377,12 +311,115 @@ bool select2 = false;
                   ),
                 ),
               ),
-         
-       
-         
          ],),
            ),
+           Padding(
+             padding: const EdgeInsets.fromLTRB(10, 0, 7, 5),
+             child: Row(children: [
+               Text(" نوع القاعة",style: GoogleFonts.amiri(
+                                              fontSize: 18,
+                                              color:Colors.black,
+                                                
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 1.7)
+),
+     
+             
+                Radio(
+                 
 
+                 
+                 value: 1,
+                  groupValue:_value, 
+                  
+                  onChanged: (value){
+                    setState(() {
+                      _value = value;
+                      show = false;
+                    });
+                  }),
+                  Text("قاعة تدريس", style: GoogleFonts.amiri(
+                                  fontSize: 16,
+                                  color:Colors.black,
+                                    
+                                  // fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.7),
+                              textAlign: TextAlign.center,),
+               
+
+              Radio(
+                 value: 2,
+                  groupValue: _value, 
+                   onChanged: (value){
+                    setState(() {
+                      _value = value;
+                      show = true;
+                    });
+                  }),
+                Text("مختبر", style: GoogleFonts.amiri(
+                                  fontSize: 16,
+                                  color:Colors.black,
+                                    
+                                  // fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.7),
+                              textAlign: TextAlign.center,),
+             
+             
+          ],),
+           ),
+           show?        
+        Padding(
+             padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+             child: Row(children: [
+               Text("نوع المختبر",style: GoogleFonts.amiri(
+                                              fontSize: 18,
+                                              color:Colors.black,
+                                                
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 1.7)
+),
+             
+             
+             Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 20, 10),
+                child: Container(
+                  // width:width *0.1,
+                  child: DropdownButton<String>(
+                    
+                     value: labSelected,
+                     hint: Text("اختر نوع المختبر"),
+                    dropdownColor: Color.fromRGBO(206, 222, 222, 1),
+                    elevation: 5,
+                    iconSize: 30,
+                   style: TextStyle(
+                                            fontSize: 16,
+                                            color:Colors.black,
+                                              
+                                            // fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.7),
+
+                    items: widget.labs.map((String dropDown){
+
+                      return DropdownMenuItem<String>(
+                        
+                        value: dropDown,
+                        child:Text(dropDown) ,
+                      );
+                      
+                    }).toList(),
+                    onChanged:(value){
+                      setState(() {
+                        labSelected = value;
+                      });
+                    } ,
+
+                   
+
+                  ),
+                ),
+              ),
+         ],),
+           ):SizedBox(height: 0,),
            Padding(
              padding: const EdgeInsets.fromLTRB(10, 0, 15, 2),
              child: Row(children: [
@@ -577,40 +614,84 @@ bool select2 = false;
          
 
          Row(children: [
-          SizedBox(height: height * 0.2,),
+          SizedBox(height: height * 0.1,),
          Padding(
            padding: const EdgeInsets.fromLTRB(0, 0, 125, 0),
            child: Container(
-              width: width * 0.3,
-                        height: height *0.055,
-                        
-                         decoration: BoxDecoration(
+                width: width * 0.3,
+             height: height *0.055,
+             
+              decoration: BoxDecoration(
+                
+                 gradient: new LinearGradient(
+                     colors: [Color.fromRGBO(206, 222, 223, 1), Color.fromRGBO(207, 222, 222, 1)]),
+                 borderRadius: BorderRadius.circular(20),
+               ),
+               child: InkWell(
+                 onTap: ()async {
+                          if (courseSelected =='لم يتم اختياره' || _value ==0 ||
+                           getText() == 'اختر الوقت' || getText2() =='اختر الوقت'  ){
+                            Dialog alert = showAlert(context,'يجب ادخال جميع البيانات المطلوبة',1);
+                          showDialog(
+                            context: context,
+                           child:alert,
+                           barrierDismissible: false, );
+
+                          }
+                         
+                            else{
+
+                          
+                          int response = await addnew3();
+                           if (response == 1){
+                             Dialog alert = showAlert(context,'تمت الاضافة ',0);
+                          showDialog(
+                            context: context,
+                           child:alert,
+                           barrierDismissible: false, );
+                              setState(() {
+                                instSelectd ='لم يتم اختياره';
+                                courseSelected ='لم يتم اختياره';
+                                _value =0;
+                                labSelected = 'لم يتم اختياره';
+                                day1 = false;
+                                day2 = false;
+                                day3 = false;
+                                day4 = false;
+                                day5 = false;
+                                day6 = false;
+                                time = null;
+                                time2 = null;
+                                
+                                
                            
-                            gradient: new LinearGradient(
-                                colors: [Color.fromRGBO(206, 222, 223, 1), Color.fromRGBO(207, 222, 222, 1)]),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-             child: InkWell(
-               onTap: (){
-                 getMat();
-                 print(day1);
-                 print(day2);
-               },
-                       
-                          child: Padding(
-                            padding: const EdgeInsets.all(3),
-                            child: Text(
-                              "حفظ",
-                              style: GoogleFonts.amiri(
-                                  fontSize: 20,
-                                  color: Colors.black,
-                                  letterSpacing: 1.7),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
+                         });
+
+                           }
+
+                          
                         
-                      ),
+                       
+                          }
+                      
+
+                         
+                        },
+            
+               child: Padding(
+                 padding: const EdgeInsets.all(3),
+                 child: Text(
+                   "حفظ",
+                   style: GoogleFonts.amiri(
+                       fontSize: 20,
+                       color: Colors.black,
+                       letterSpacing: 1.7),
+                   textAlign: TextAlign.center,
+                 ),
+               ),
+             
            ),
+             ),
          ),
         ],),
 
@@ -628,6 +709,126 @@ bool select2 = false;
       
  
   }
+
+  Future getalldata3() async {
+   
+    String id = '60ddc9735b4d43f8eaaabf83';
+    // years.clear();
+    course2.clear();
+    fromTime1.clear();
+    toTime1.clear();
+    days1.clear();
+    // dep.clear();
+    inst1.clear();
+    room1.clear();
+
+    List<String> arr =[];
+    String time = "";
+
+    String apiUrl = "https://core-graduation.herokuapp.com/getFromDraft?idDep=${widget.idDep}&tableName=${widget.tablename}";
+    print(apiUrl);
+ final response =
+        await http.get(Uri.parse(apiUrl));
+        print(response.statusCode);
+        
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+      if(decoded['response'][i]['fromOtherDep']== 'false' && decoded['response'][i]['toOtherDep']== 'true' ){
+
+      
+      //  years.add(decoded['response'][i]['year']); 
+       course2.add(decoded['response'][i]['courseName']); 
+       time = decoded['response'][i]['timeSolt'];
+       inst1.add(decoded['response'][i]['courseIns']);
+       room1.add(decoded['response'][i]['roomType']);
+       print(time);
+     
+         arr = time.split('/');
+         fromTime1.add(arr[0]);
+         toTime1.add(arr[1]);
+         days1.add(arr[2]);
+         print (arr[0]);     
+      }
+     }     
+    }
+    return 1 ;
+
+    
+
+      }
+      
+      
+      
+ Future addnew3 () async {
+         String timeSlot = "";
+      
+         timeSlot += getText();
+
+       
+         timeSlot += '/';
+         timeSlot += getText2();
+         timeSlot += '/';
+         List<String> days = [];
+         if(day1 == true){
+           days.add( 'سبت');
+         }
+          if(day2 == true){
+           
+           days.add( 'احد');
+         }
+          if(day3 == true){
+           
+           days.add( 'اثنين');
+         }
+          if(day4 == true){
+           
+           days.add( 'ثلاثاء');
+         }
+          if(day5 == true){
+           
+           days.add( 'اربعاء');
+         }
+          if(day6 == true){
+           days.add( 'خميس');
+         } 
+         for(int y =0; y<days.length;y++){
+           timeSlot += days[y];
+           if(y+1 ==days.length){
+             continue;
+           }
+           timeSlot += ',';
+         }
+
+         print(timeSlot);
+         String room;
+  if(_value == 1){
+    room = "قاعة تدريس";
+  }
+  else room = labSelected;
+
+ 
+    final String apiUrl = 
+    "https://core-graduation.herokuapp.com/saveMatOfDraft?depId=${widget.idDep}&tableName=${widget.tablename}&courseIns=$instSelectd&courseName=$courseSelected&flag=2&timeSlot=$timeSlot&roomType=$room&date=${widget.year}";
+    
+    print(apiUrl);
+    final response =
+        await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;
+        print(decoded['response'][0]);
+        // return decoded['response'][0]['flag'];
+      
+
+    }
+          return 1;
+
+    }
+ 
+
 
 
   

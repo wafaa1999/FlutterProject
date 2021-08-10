@@ -4,7 +4,11 @@ import 'package:graduationproject/screens/AddNewMaterial.dart';
 import 'package:graduationproject/screens/HeadOfDepMain.dart';
 import 'package:graduationproject/screens/Login.dart';
 import 'package:graduationproject/screens/planOfMaterials.dart';
+import 'package:graduationproject/screens/showIns.dart';
 import 'package:graduationproject/screens/showRooms.dart';
+import 'package:graduationproject/screens/showtables.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AppDrawer extends StatefulWidget {
   // AppDrawer(String idDep);
@@ -28,6 +32,101 @@ class AppDrawer extends StatefulWidget {
 //                                   ); 
 
 class _AppDrawerState extends State<AppDrawer> {
+    List<String> roomsnames=[];
+     List<String> roomstype=[];
+     List<String> roomscamp=[];
+     List<String> tablenames = [];
+     List<String> status = [];
+     List<String> year=[];
+     List<String> roomsnum=[];
+     List<String> instNames = [];
+         Future getInst() async {
+
+    print(widget.idDep);
+    final String apiUrl = "https://core-graduation.herokuapp.com/getAllIsn?idDep=${widget.idDep}";
+    final response =
+        await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       instNames.add(decoded['response'][i]['name']);  
+      
+
+
+       }
+      
+       }
+   print(instNames);
+ 
+    return 1 ;
+
+    
+
+      }
+ 
+      Future getroomsall() async {
+
+    print(widget.idDep);
+    final String apiUrl = "https://core-graduation.herokuapp.com/getRoomsofDep?idDep=${widget.idDep}";
+    final response =
+        await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       roomsnames.add(decoded['response'][i]['number']);  
+       roomstype.add(decoded['response'][i]['type']);
+       roomscamp.add(decoded['response'][i]['campous']);
+       roomsnum.add(decoded['response'][i]['name']);
+
+
+       }
+      
+       }
+   print(roomsnames);
+   print(roomstype);
+   print(roomscamp);
+   print(roomsnum);
+    return 1 ;
+
+    
+
+      }
+
+    Future getalltables() async {
+
+
+    print(widget.idDep);
+    final String apiUrl = "https://core-graduation.herokuapp.com/getTables?idDep=${widget.idDep}";
+    final response =
+        await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       tablenames.add(decoded['response'][i]['name']);  
+       status.add(decoded['response'][i]['status']);
+       year.add(decoded['response'][i]['year']);
+
+      
+       }
+     print(tablenames);
+     print(status);
+        
+       }
+    return 1 ;
+
+    
+
+      }
+    
+ 
   @override
 
   Widget build(BuildContext context) {
@@ -118,21 +217,29 @@ class _AppDrawerState extends State<AppDrawer> {
              
            InkWell(
 
-               onTap:() =>{
-                //  Navigator.pushReplacement(
-                //                     context,
-                //                     MaterialPageRoute<void>(
-                //                       builder: (BuildContext context) =>
-                //                          HeadOfDepMain(
-                //                         idDep:widget.idDep ,
-                //                         instName: widget.instName,
-                //                         depName: widget.depName,
+                onTap: ()async{
+                           instNames.clear();
+                           int response = await getInst();
+                           if(response ==1){
+                                 Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                         ShowInst(
+                                        idDep:widget.idDep,
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+                                        instNames: instNames
                                         
-                //                       ),
-                //                     ),
-                //                   )
+                                      ),
+                                    ),
+                                  ); 
 
-               },
+                           }
+
+
+
+                         },
                             child: ListTile(
                               
             title: Container(
@@ -156,22 +263,32 @@ class _AppDrawerState extends State<AppDrawer> {
              
                 InkWell(
 
-               onTap:() =>{
-                 Navigator.pushReplacement(
+                onTap: ()async{
+                           roomsnames.clear();
+                           roomscamp.clear();
+                           roomstype.clear();
+                           int responce = await getroomsall();
+                           if(responce == 1){
+                           
+
+                            Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute<void>(
                                       builder: (BuildContext context) =>
                                          ShowRoom(
-                                        idDep:widget.idDep ,
+                                        idDep:widget.idDep,
                                         instName: widget.instName,
                                         depName: widget.depName,
+                                        roomsnames:roomsnames,
+                                        roomscamp:roomscamp,
+                                        roomstype:roomstype,
+                                        roomnum: roomsnum,
                                         
                                       ),
                                     ),
-                                  )
-
-               },
-                            child: ListTile(
+                                  ); 
+                           }
+                         },           child: ListTile(
                               
             title: Container(
               height: height * 0.04,
@@ -192,22 +309,33 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
              ),
                 InkWell(
+onTap: ()async{
+                           tablenames.clear();
+                           status.clear();
+                           year.clear();
+                             int responce = await getalltables();
+                           if(responce == 1){
+                           
 
-               onTap:() =>{
-                //  Navigator.pushReplacement(
-                //                     context,
-                //                     MaterialPageRoute<void>(
-                //                       builder: (BuildContext context) =>
-                //                          HeadOfDepMain(
-                //                         idDep:widget.idDep ,
-                //                         instName: widget.instName,
-                //                         depName: widget.depName,
-                                        
-                //                       ),
-                //                     ),
-                //                   )
+                            Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                         AllTableshow(
+                                        idDep:widget.idDep,
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+                                        tablenames:tablenames,
+                                        status:status,
+                                        year:year 
+                                      ),
+                                    ),
+                                  ); 
+                           }
+                         },
+                           
 
-               },
+
                             child: ListTile(
                               
             title: Container(

@@ -44,14 +44,15 @@ class _AddTable2State extends State<AddTable2> {
      bool select2 = false;
      List<String> depNames1 = [];
      List<String> idDeps1 = [];
-      List<String> days1 = [];
-  List<String> fromTime1 =[];
-  List<String> toTime1 = [];
-  List<String> depNames = [];
-  List<String> depsId = [];
-  List<String> dep =[];
-  List<String> years = [];
-  List<String> course2 = [];
+     List<String> days1 = [];
+     List<String> fromTime1 =[];
+     List<String> toTime1 = [];
+     List<String> depNames = [];
+     List<String> depsId = [];
+     List<String> dep =[];
+     List<String> years = [];
+     List<String> course2 = [];
+  
      @override
      void initState() { 
        super.initState();

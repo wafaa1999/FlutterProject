@@ -30,6 +30,14 @@ class _AllTableshowState extends State<AllTableshow> {
      List<ListItem> items =[] ;
      bool wafaa = false;
      bool first = true;
+   List<String> courseNumbers =[];
+   List<String> courseNames =[];
+   List<String> insts =[];
+   List<String> room =[];
+   List<String> roomtype =[];
+   List<String> fromTime =[];
+   List<String> toTime =[];
+   List<String> days =[];
 
   @override
   void initState() { 
@@ -67,13 +75,38 @@ Future deleteFunction(String tableName)async{
       
     
     }
-    
+
+}
+
+Future getFinalDataTable(String tableName)async{
+
+  
   
 
+   String apiUrl = "https://core-graduation.herokuapp.com/getFinalTable?tableName=${tableName}&idDep=${widget.idDep}";
+   print(apiUrl);
+  final response =
+        await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      Map decoded = json.decode(response.body) ; 
+      print(decoded);
+      for(int i =0; i<decoded['response'].length; i++){
+            courseNames.add(decoded['response'][i]['courseName']); 
+            courseNumbers.add(decoded['response'][i]['courseNumber']); 
+            days.add(decoded['response'][i]['days']); 
+            toTime.add(decoded['response'][i]['endHour']); 
+            fromTime.add(decoded['response'][i]['startHour']); 
+            insts.add(decoded['response'][i]['instName']); 
+            roomtype.add(decoded['response'][i]['roomType']); 
+            room.add(decoded['response'][i]['roomNumber']); 
 
-
-
-
+      }
+      print(courseNames);
+      print(courseNumbers);
+      
+    
+    }
+    return 1;
 }
 
 
@@ -158,13 +191,15 @@ Future deleteFunction(String tableName)async{
 
   }
   
- void onSelected(BuildContext context,MenuItem item,index){
+ void onSelected(BuildContext context,MenuItem item,index)async{
 
 
     switch(item){
       case MenuItem.itemEdit:
-         items[index].type =='done'?
-          Navigator.push(
+         if (items[index].type =='done'){
+         int inm = await getFinalDataTable(items[index].title);
+         if(inm == 1){
+             Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute<void>(
                                       builder: (BuildContext context) =>
@@ -175,19 +210,22 @@ Future deleteFunction(String tableName)async{
                                         depName:widget.depName,
                                          tableName:items[index].title,
                                         year: items[index].year,
-                                        courseNumbers :[],
-                                        courseNames :[],
-                                        insts:[],
-                                        room:[],
-                                        roomtype:[],
-                                        fromTime:[],
-                                        toTime:[],
-                                        days:[],
+                                        courseNumbers :courseNumbers,
+                                        courseNames :courseNames,
+                                        insts:insts,
+                                        room:room,
+                                        roomtype:roomtype,
+                                        fromTime:fromTime,
+                                        toTime:toTime,
+                                        days:days,
       
                                       ),
                                     ),
-                                  )
-         :
+             );
+         
+         }
+         }
+         else
         Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute<void>(

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graduationproject/screens/AddNewRoom.dart';
+import 'package:graduationproject/widgets/TimeDialog.dart';
 import 'package:graduationproject/widgets/alertDialg.dart';
 import 'package:graduationproject/widgets/drawer1.dart';
+import 'package:graduationproject/widgets/instDialog.dart';
+import 'package:graduationproject/widgets/roomDialog.dart';
 import 'package:graduationproject/widgets/textDialog.dart';
 import 'package:graduationproject/widgets/textEdit.dart';
 import 'package:http/http.dart' as http;
@@ -30,6 +33,7 @@ final List<String> days;
 
 
 
+
   const ShowFinalTable({Key key, this.idDep, this.depName, this.instName, this.courseNumbers, this.courseNames, this.insts, this.room, this.roomtype, this.fromTime, this.toTime, this.days, this.tableName, this.year}) : super(key: key);
   @override
   _ShowFinalTableState createState() => _ShowFinalTableState();
@@ -48,12 +52,19 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
      bool delete = false;
      bool flag = false;
      var t = 0;
+     List<String> insts =['لم يحدد'];
+     List<String> room = ['لم يحدد'];
+     List<String> labsname = ['لم يحدد'];
+     List<String> labsnumber = ['لم يحدد'];
 
+ 
      final columns = ['رقم المساق','اسم المساق','المدرس','القاعة','الوقت'];
 
      @override
      void initState() { 
        super.initState();
+       getInst();
+       getRooms();
        for(int i =0 ; i<widget.courseNames.length;i++){
         tables.add(TableF(widget.courseNumbers[i],widget.courseNames[i],widget.insts[i],widget.room[i],widget.roomtype[i],widget.days[i]+'\n'+widget.fromTime[i]+" - "+widget.toTime[i],
       widget.fromTime[i],widget.toTime[i],widget.days[i]  ));
@@ -123,20 +134,8 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
           
       ),
       body:
-         
-       
-              Padding(
-                padding: const EdgeInsets.all(5),
-                       
-           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            child:
-             SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            child:
-            Column(children:[
+         Column(children: [
+
                
                
            Padding(
@@ -147,7 +146,7 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
                 width: MediaQuery.of(context).size.width * 0.45,
                 decoration: BoxDecoration(
                             gradient: new LinearGradient(
-                                colors: [Colors.grey[700], Colors.grey[700]]),
+                                colors: [ Color.fromRGBO(212, 172, 13,1,),  Color.fromRGBO(212, 172, 13,1,)]),
                             borderRadius: BorderRadius.circular(30),
                             boxShadow: [
                               // BoxShadow(
@@ -252,7 +251,7 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
                   wafaa= !wafaa;
                   
                      });
-                //  deleteFunction();
+                 deleteFunction();
    
                 
               },
@@ -264,8 +263,19 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
                     
                 ),
        
-              
-
+         Padding(
+                padding: const EdgeInsets.all(5),
+                       
+           child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            child:
+             SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child:
+            Column(children:[
+           
               
               wafaa?
               buildDataTable():buildDataTable(),
@@ -277,7 +287,12 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
       ),
                                   
               ),
-            );
+           
+              
+
+         ],),
+       
+             );
 
  
       
@@ -334,7 +349,7 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
               
               //  horizontalMargin: 2,
             dividerThickness: 1,
-            columnSpacing:20,
+            columnSpacing:5,
             // delete?48:55,
             
       
@@ -388,7 +403,7 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
          
           cells: Utils.modelBuilder(cells, (index, cell) {
             
-            final showEditIcon =( index == 2 || index == 1 ) && edit;
+            final showEditIcon =( index == 2 || index == 3 || index == 4 ) && edit;
             
             
             
@@ -397,9 +412,9 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
               
               
               Container(
-                // width: MediaQuery.of(context).size.width * 0.05,
+                width: index ==0?MediaQuery.of(context).size.width /4:index ==4?MediaQuery.of(context).size.width /4:MediaQuery.of(context).size.width /5,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: index ==0?const EdgeInsets.fromLTRB(2, 0, 5, 0):index ==4?const EdgeInsets.fromLTRB(2, 0, 5, 0):const EdgeInsets.all(3.0),
                   child: Center(
                     child: Text('$cell',style: GoogleFonts.amiri(
                                         fontSize: 15,
@@ -416,18 +431,28 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
               showEditIcon: showEditIcon,
               
               
-              onTap: () {
+              onTap: ()async {
                 if(edit){
                 switch (index) {
-                  case 1:
-                  //   editType(room);
-                  //   break;
-                  // case 2:
-                    // editCamp(room);
-                    break;
-
                   case 2:
+                  // int inst = await getInst();
+                  // if (inst == 1){
+                     print(index);
+                   editinst(table);
+                     break;
+
+
+                  // }
+                   break;
+
+                  
+                  case 3:
+                  editRoom(table);
                   // editName(room);
+                  break;
+
+                  case 4:
+                  editTime(table);
                   break;
                 }
                 }
@@ -446,8 +471,7 @@ List<DataColumn> getColumns(List<String> columns) {
       return DataColumn(
         
         label: Padding(
-            padding:widget.courseNumbers.isEmpty?EdgeInsets.fromLTRB(5, 0, 5, 0)
-          : column =='اسم المساق'?delete?const EdgeInsets.fromLTRB(0, 0, 30, 0):const EdgeInsets.fromLTRB(0, 0, 30, 0):const EdgeInsets.all(2.0),
+            padding: column =='رقم المساق'?const EdgeInsets.fromLTRB(0, 0, 3, 0):const EdgeInsets.all(2.0),
                   child: Text(column, style: GoogleFonts.amiri(
                                     fontSize: 18,
                                     color:Colors.white,
@@ -459,194 +483,273 @@ List<DataColumn> getColumns(List<String> columns) {
       );
     }).toList();
   }
-//   Future editType(Room editRoom) async {
-//     bool visit = false;
-//     final editedValue = await showTextDialog(
-//       context,
-//       title: 'تغيير نوع القاعة',
-//       one: 'قاعة تدريس',
-//       two: 'مختبر'
+  Future editinst(TableF editedTable) async {
+    bool visit = false;
+    final editedValue = await showTextDialog1(
+      context,
+      title: 'تغيير نوع المدرس',
+      inst:insts,
 
-//     );
+    );
 
-//     setState(() => rooms = rooms.map((room) {
+    setState(() => tables = tables.map((table) {
       
-//           final isEditedRoom= room == editRoom;
-//           if(editedValue != 'false'){
-//           isEditedRoom? editRoomInBack(room,editedValue,0):SizedBox(height: 0,);
-//           visit =true;
-//           }
-//           if(editedValue != 'false' && isEditedRoom ){
-//           return room.copy1(editedValue);
-//           }
-//           else{
+          final isEditedTable=  table == editedTable;
+          print(editedValue);
+          if(editedValue != 'false'){
+          isEditedTable? 
+          editTableInBack(table,editedValue,0):SizedBox(height: 0,);
+          visit =true;
+          }
+          if(editedValue != 'false' && isEditedTable ){
+          return table.copyinst(editedValue);
+          }
+          else{
 
-//           return room;
-//           }
+          return table;
+          }
       
-//         }).toList());
-//         if(visit){
-//            Dialog alert = showAlert(context,'تم التعديل',0);
-//                           showDialog(
-//                             context: context,
-//                            child:alert,
-//                            barrierDismissible: false, );
-
-//         }else {
-//            Dialog alert = showAlert(context,'التعديل غير صحيح',1);
-//                           showDialog(
-//                             context: context,
-//                            child:alert,
-//                            barrierDismissible: false, );
-
-//         }
-//   }
-
-
-//   Future editCamp(Room editRoom) async {
-//     bool visited = false;
-//     final editedValue = await showTextDialog(
-//       context,
-//       title: 'تغيير نوع الحرم',
-//       value: editRoom.camp,
-//       one: 'الحرم القديم',
-//       two: 'الحرم الجديد'
-//     );
-
-//     setState(() => rooms = rooms.map((room) {
-//       final isEditedRoom= room == editRoom;
-//           if(editedValue != 'false'){
-//           isEditedRoom? editRoomInBack(room,editedValue,1):SizedBox(height: 0,);
-//           }
-//           if(editedValue != 'false' && isEditedRoom ){
-//             visited = true;
-            
-//           return room.copy2(editedValue);
-//           }
-//           else{
-             
-//           return room;
-//           }
-     
-//         }).toList());
-//         if(visited){
-//            Dialog alert = showAlert(context,'تم التعديل',0);
-//                           showDialog(
-//                             context: context,
-//                            child:alert,
-//                            barrierDismissible: false, );
-
-//         }else {
-//            Dialog alert = showAlert(context,'التعديل غير صحيح',1);
-//                           showDialog(
-//                             context: context,
-//                            child:alert,
-//                            barrierDismissible: false, );
-
-//         }
-//   }
-
-//    Future editName(Room editRoom) async {
-//     bool visit = false;
-//     final editedValue = await showTextDialog22(
-//       context,
-//       title: 'تغيير اسم القاعة',
-     
-
-//     );
-
-//     setState(() => rooms = rooms.map((room) {
-      
-//           final isEditedRoom= room == editRoom;
-         
-//           if(isEditedRoom){
-//             editRoomInBack(room,editedValue,2);
-//           visit =true;
-
-//           } 
+        }).toList());
         
-//           if(isEditedRoom ){
-//           return room.copy3(editedValue);
-//           }
-//           else{
+          //  Dialog alert = showAlert(context,'تم التعديل',0);
+          //                 showDialog(
+          //                   context: context,
+          //                  child:alert,
+          //                  barrierDismissible: false, );
 
-//           return room;
-//           }
+    
+  }
+
+  Future editRoom(TableF editedTable) async {
+    bool visit = false;
+    final editedValue = await showTextDialog2(
+      context,
+      title: 'تغيير نوع القاعة',
+      room:room,
+      labs:labsname,
+
+    );
+
+    setState(() => tables = tables.map((table) {
       
-//         }).toList());
-//         if(visit){
-//            Dialog alert = showAlert(context,'تم التعديل',0);
-//                           showDialog(
-//                             context: context,
-//                            child:alert,
-//                            barrierDismissible: false, );
+          final isEditedTable=  table == editedTable;
+          if(editedValue != 'false'){
+          isEditedTable? 
+          editTableInBack(table,editedValue,1):SizedBox(height: 0,);
+          visit =true;
+          }
+         
+            if(editedValue != 'false' && isEditedTable ){
+             List <String> edited = editedValue.split(',');
+     String roomtype = "";
+     String roomnumber = "";
+     if(edited[0] == 'قاعة تدريس'){
+     roomtype  = 'قاعة تدريس';
+     roomnumber = edited[1];}
+     else 
+     {
+        roomtype  = edited[1];
+        for (int i =0; i<labsname.length ;i++){
+          if (labsname[i] == edited[1]){
+            roomnumber = labsnumber[i];
+            break;
+          }
+        }
+     }
+            
 
-//         }
-//   }
+          return table.copyRoom(roomnumber,roomtype);
+          }
+          else{
 
+          return table;
+          }
+         
+        }).toList());
+        
+          //  Dialog alert = showAlert(context,'تم التعديل',0);
+          //                 showDialog(
+          //                   context: context,
+          //                  child:alert,
+          //                  barrierDismissible: false, );
 
+    
+  }
 
+  Future editTime(TableF editedTable) async {
+    bool visit = false;
+    final editedValue = await showTextDialog3(
+      context,
+      title: 'تعديل الوقت',
+    
 
-// Future editRoomInBack(Room room,editedValue,flag)async{
-//    String apiUrl;
-//    String type = 'فاعة تدريس';
-//   if(flag == 0){
-//       apiUrl = "https://core-graduation.herokuapp.com/editRoom?idDep=${widget.idDep}&number=${room.number}&type=$editedValue&campous=${room.camp}&name=${room.name}";
+    );
 
-//   }
-//   else if(flag == 2){
-//     if(editedValue != 'قاعة تدريس')
-//     {
-//       type = 'مختبر';
-//     }
-//               apiUrl = "https://core-graduation.herokuapp.com/editRoom?idDep=${widget.idDep}&number=${room.number}&type=$type&campous=${room.camp}&name=${editedValue}";
+    setState(() => tables = tables.map((table) {
+      
+          final isEditedTable=  table == editedTable;
+          if(editedValue != 'false'){
+          isEditedTable? 
+          editTableInBack(table,editedValue,2):SizedBox(height: 0,);
+          visit =true;
+          }
+         
+            if(editedValue != 'false' && isEditedTable ){
+             List <String> edited = editedValue.split('/');
+            
 
+          return table.copyTime(edited[2]+'\n' +edited[0]+" - "+edited[1],edited[0],edited[1],edited[2]);
+          }
+          else{
 
+          return table;
+          }
+         
+        }).toList());
+        
+          //  Dialog alert = showAlert(context,'تم التعديل',0);
+          //                 showDialog(
+          //                   context: context,
+          //                  child:alert,
+          //                  barrierDismissible: false, );
 
-//   }
-//   else{
-//               apiUrl = "https://core-graduation.herokuapp.com/editRoom?idDep=${widget.idDep}&number=${room.number}&type=${room.type}&campous=$editedValue&name=${room.name}";
+    
+  }
 
+Future editTableInBack(TableF table,editedValue,flag)async{
+   String apiUrl;
 
-//   }
+  if(flag == 0){
+    // (idDep, tableName, courseNumber, startHour, endHour, roomNumber, roomType, days, instName)
+      apiUrl = "https://core-graduation.herokuapp.com/editFinalTable?idDep=${widget.idDep}&tableName=${widget.tableName}&courseNumber=${table.courseNumber}&startHour=${table.fromTime}&endHour=${table.toTime}&roomNumber=${table.courseRoom}&roomType=${table.courseType}&days=${table.days}&instName=$editedValue";
+      print(apiUrl);
+  }
+ else if(flag == 1){
+   print(editedValue);
+   
 
-//   final response =
-//         await http.get(Uri.parse(apiUrl));
-//     if (response.statusCode == 200) {
-//       Map decoded = json.decode(response.body) ; 
-//       print(decoded['response'][0]['state']);
+     List <String> edited = editedValue.split(',');
+     print(edited[0]);
+   print(edited[1]);
+     String roomtype1 = "";
+     String roomnumber1 = "";
+     if(edited[0] == 'قاعة تدريس'){
+       print(";lkjhgfddfghjk");
+     roomtype1  = 'قاعة تدريس';
+     roomnumber1 = edited[1];
+     print(roomtype1);}
+     else 
+     {
+       print(";0000000000000000");
+        roomtype1  = edited[1];
+        for (int i =0; i<labsname.length ;i++){
+          if (labsname[i] == edited[1]){
+            roomnumber1 = labsnumber[i];
+            break;
+          }
+        }
+        
+     }
+
+     print(roomnumber1);
+     print(roomtype1);
+    // (idDep, tableName, courseNumber, startHour, endHour, roomNumber, roomType, days, instName)
+      apiUrl = "https://core-graduation.herokuapp.com/editFinalTable?idDep=${widget.idDep}&tableName=${widget.tableName}&courseNumber=${table.courseNumber}&startHour=${table.fromTime}&endHour=${table.toTime}&roomNumber=$roomnumber1&roomType=$roomtype1&days=${table.days}&instName=${table.courseInst}";
+
+  }
+  else if(flag == 2){
+   List <String> edited = editedValue.split('/');
+   String allTime = edited[2]+'\n' +edited[0]+" - "+edited[1];
+      
+    // (idDep, tableName, courseNumber, startHour, endHour, roomNumber, roomType, days, instName)
+      apiUrl = "https://core-graduation.herokuapp.com/editFinalTable?idDep=${widget.idDep}&tableName=${widget.tableName}&courseNumber=${table.courseNumber}&startHour=${edited[0]}&endHour=${edited[1]}&roomNumber=${table.courseRoom}&roomType=${table.courseType}&days=${edited[2]}&instName=${table.courseInst}";
+
+  }
+  
+  final response =
+        await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      Map decoded = json.decode(response.body) ; 
+      print(decoded['response'][0]);
       
     
-//     }
+    }
 
 
 
 
-// }
+}
 
 
-// Future deleteFunction()async{
+Future deleteFunction()async{
 
   
-//   for(int i=0;i< selected.length;i++){
-//    String apiUrl = "https://core-graduation.herokuapp.com/deleteRoomFromDep?idDep=${widget.idDep}&number=${selected[i].number}";
-//   final response =
-//         await http.get(Uri.parse(apiUrl));
-//     if (response.statusCode == 200) {
-//       Map decoded = json.decode(response.body) ; 
-//       print("-************");
-//       // print(decoded['response'][0]['state']);
-//       print("////////////////");
+  for(int i=0;i< selected.length;i++){
+   String apiUrl = "https://core-graduation.herokuapp.com/deleteFromFinalTable?courseName=${selected[i].courseName}&courseNumber=${selected[i].courseNumber}&idDep=${widget.idDep}&tableName=${widget.tableName}";
+   print("delete");
+  final response =
+        await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      Map decoded = json.decode(response.body) ; 
+      print("-************");
+      // print(decoded['response'][0]['state']);
+      print("////////////////");
       
     
-//     }
+    }
   
 
-// }
+}
+selected.clear();
 
-// }
 
+}
+Future getInst()async{
 
+ String apiUrl2 = "https://core-graduation.herokuapp.com/getAllIsn?idDep=${widget.idDep}";
+
+ final response1 =
+        await http.get(Uri.parse(apiUrl2));
+        
+    if (response1.statusCode == 200) {
+  
+        Map decoded = json.decode(response1.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       insts.add(decoded['response'][i]['name']); 
+      
+       }
+    }
+    print(insts);
+    return 1;
+}
+
+Future getRooms()async{
+
+ String apiUrl2 = "https://core-graduation.herokuapp.com/getRoomsofDep?idDep=${widget.idDep}";
+
+ final response1 =
+        await http.get(Uri.parse(apiUrl2));
+        
+    if (response1.statusCode == 200) {
+  
+        Map decoded = json.decode(response1.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       if (decoded['response'][i]['name'] =='قاعة تدريس'){
+       room.add(decoded['response'][i]['number']); }
+       else{
+       labsname.add(decoded['response'][i]['name'] ); 
+       labsnumber.add(decoded['response'][i]['number'] ); 
+       }
+      
+       }
+    }
+    print(insts);
+    return 1;
+}
 
 
 
@@ -668,16 +771,41 @@ class TableF{
 
 
 
-  // TableF copy1(
-  //   String type,
+  TableF copyinst(
+    String courseInst,
  
-  // ) =>
-  //     Room(
-  //       this.number,
-  //       type,
-  //       this.camp,
-  //       this.name,
-  //     );
+  ) =>
+      TableF(
+        this.courseNumber, this.courseName,courseInst, this.courseRoom, this.courseType, this.time, this.fromTime, this.toTime, this.days
+        
+      );
+
+      
+  TableF copyRoom(
+    String courseRoom,
+    String courseType,
+ 
+  ) =>
+      TableF(
+
+        this.courseNumber, this.courseName,this.courseInst, courseRoom, courseType, this.time, this.fromTime, this.toTime, this.days
+        
+      );
+
+      TableF copyTime(
+        String time,
+    String toTime,
+    String fromTime,
+    String alldays,
+
+ 
+  ) =>
+      TableF(
+
+        this.courseNumber, this.courseName,this.courseInst, this.courseRoom, this.courseType, time,fromTime, toTime, days
+        
+      );
+
 
 
   //     Room copy2(

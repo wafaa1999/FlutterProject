@@ -16,6 +16,8 @@ import 'package:graduationproject/screens/ThreeMainCat.dart';
 import 'package:graduationproject/screens/planOfMaterials.dart';
 import 'package:graduationproject/screens/showRooms.dart';
 import 'package:graduationproject/screens/showtables.dart';
+import 'package:graduationproject/widgets/TimeDialog.dart';
+import 'package:graduationproject/widgets/roomDialog.dart';
 import 'package:graduationproject/widgets/table.dart';
 import 'package:graduationproject/widgets/test.dart';
 

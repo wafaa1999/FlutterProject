@@ -26,6 +26,7 @@ class _Login extends State<Login> {
   @override
   void initState() { 
     super.initState();
+    // done();
     // wafaa();
   
 
@@ -84,6 +85,15 @@ class _Login extends State<Login> {
     }
      EasyLoading.dismiss();
   }
+// Future done() async {
+
+   
+//     final String apiUrl = "http://192.168.1.7:3000/runCore?idDep=60ddc9735b4d43f8eaaabf83&tableName=الفصل الاول&date=2020/2021&semester=1&softFlag=true";
+//    print('fgf');
+//     final response =
+//          http.get(Uri.parse(apiUrl));
+//     print("d");
+//   }
 
 
   @override

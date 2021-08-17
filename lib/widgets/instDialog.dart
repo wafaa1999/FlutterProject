@@ -52,93 +52,101 @@ class _InstDialogWidgetState extends State<InstDialogWidget> {
         borderRadius: BorderRadius.circular(20)
       ),
       
-        title: Text(widget.title,style: GoogleFonts.amiri(
-                                  fontSize: 20,
-                                  color:Colors.grey[700],
-                                    
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.7),),
+        title:Text(""),
 
-        content: 
+        content:
+        Stack(
+          overflow: Overflow.visible,
+        alignment: Alignment.topCenter,
+          children:[ 
+            Container(
+              height: MediaQuery.of(context).size.height*0.22,
+              child: Column(children:[
+                Text(widget.title,style: GoogleFonts.amiri(
+                                    fontSize: 20,
+                                    color:Colors.grey[700],
+                                      
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.7),),
           Row(children: [
 
-            Padding(
-             padding: const EdgeInsets.fromLTRB(10, 0, 10, 5),
-             child: Row(children: [
-               Text("اسم المدرس",style: GoogleFonts.amiri(
-                                              fontSize: 18,
+              Padding(
+               padding: const EdgeInsets.fromLTRB(10, 0, 10, 5),
+               child: Row(children: [
+                 Text("اسم المدرس",style: GoogleFonts.amiri(
+                                                fontSize: 18,
+                                                color:Colors.black,
+                                                  
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 1.7)
+),
+               
+               
+               Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 20, 10),
+                  child: Container(
+                    // width:width *0.1,
+                    child: DropdownButton<String>(
+                      
+                       value: instSelected,
+                       hint: Text("اختر اسم المدرس"),
+                      dropdownColor: Color.fromRGBO(206, 222, 222, 1),
+                      elevation: 5,
+                      iconSize: 30,
+                     style: TextStyle(
+                                              fontSize: 16,
                                               color:Colors.black,
                                                 
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 1.7)
-),
-             
-             
-             Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 20, 10),
-                child: Container(
-                  // width:width *0.1,
-                  child: DropdownButton<String>(
-                    
-                     value: instSelected,
-                     hint: Text("اختر اسم المدرس"),
-                    dropdownColor: Color.fromRGBO(206, 222, 222, 1),
-                    elevation: 5,
-                    iconSize: 30,
-                   style: TextStyle(
-                                            fontSize: 16,
-                                            color:Colors.black,
-                                              
-                                            // fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.7),
+                                              // fontWeight: FontWeight.bold,
+                                              letterSpacing: 1.7),
 
-                    items: widget.inst.map((String dropDown){
+                      items: widget.inst.map((String dropDown){
 
-                      return DropdownMenuItem<String>(
+                        return DropdownMenuItem<String>(
+                          
+                          value: dropDown,
+                          child:Text(dropDown) ,
+                        );
                         
-                        value: dropDown,
-                        child:Text(dropDown) ,
-                      );
-                      
-                    }).toList(),
-                    onChanged:(value){
-                      setState(() {
-                        instSelected = value;
-                      });
-                    } ,
+                      }).toList(),
+                      onChanged:(value){
+                        setState(() {
+                          instSelected = value;
+                        });
+                      } ,
 
-                   
+                     
 
+                    ),
                   ),
                 ),
-              ),
          ],),
            ),
         
 
           ],),
-       
-     
-        
-        actions: [
-          Center(
+         Center(
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Container(
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: MediaQuery.of(context).size.height * 0.06,
                  decoration: BoxDecoration(
-                              // gradient: new LinearGradient(
-                              //     colors: [Color.fromRGBO(206, 222, 222, 1), Color.fromRGBO(206, 222, 222, 1)]),
+                              gradient: new LinearGradient(
+                                  colors: [Color.fromRGBO(64, 128, 128, 1),Color.fromRGBO(64, 128, 128, 1)]),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                child: Row(
-                                  children:[ ElevatedButton(
-                    child: Text('حفظ',style: GoogleFonts.amiri(
-                                          fontSize: 18,
-                                          color:Colors.white,
-                                            
-                                          // fontWeight: FontWeight.bold,
-                                          letterSpacing: 1.7),),
-                    onPressed: (){
+              
+                                  child: InkWell(
+                    child: Center(
+                      child: Text('حفظ',style: GoogleFonts.amiri(
+                                            fontSize: 18,
+                                            color:Colors.white,
+                                              
+                                            // fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.7),),
+                    ),
+                    onTap: (){
 
                       
                       
@@ -146,7 +154,7 @@ class _InstDialogWidgetState extends State<InstDialogWidget> {
                      
                         
 
-                      }
+                    }
 
                       
                     
@@ -154,12 +162,25 @@ class _InstDialogWidgetState extends State<InstDialogWidget> {
                   ),
                   
                   
-                                  ]),
+                                  
               ),
             ),
           ),
 
-           
+           ]),
+            ),
+      Positioned(
+            top: -108,
+            child: CircleAvatar(
+              backgroundColor:Color.fromRGBO(64, 128, 128, 1),
+              radius: 39,
+              child: 
+                    Icon(Icons.mode_edit, color: Colors.white, size: 30,),
+            )
+          ),
+          ]),
+        actions: [
+        
         ],
       );
 }

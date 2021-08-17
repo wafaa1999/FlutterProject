@@ -54,122 +54,118 @@ class _TextDialogWidgetState extends State<TextDialogWidget> {
         borderRadius: BorderRadius.circular(20)
       ),
       
-        title: Text(widget.title,style: GoogleFonts.amiri(
-                                  fontSize: 20,
-                                  color:Colors.grey[700],
-                                    
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.7),),
+        title: Text(""),
+             content: 
+         Stack(
+          overflow: Overflow.visible,
+        alignment: Alignment.topCenter,
+          children:[
+            Container(
+                            height: MediaQuery.of(context).size.height*0.2,
 
-        content: 
+              child: Column(children: [Text(widget.title,style: GoogleFonts.amiri(
+                                    fontSize: 20,
+                                    color:Colors.grey[700],
+                                      
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.7),),
+
+  
           Row(children: [
 
-             Radio(
-                 value: 1,
-                  groupValue:_value, 
-                  
-                  onChanged: (value){
-                    setState(() {
-                      _value = value;
-                    });
-                  }),
-                  Text(widget.one, style: GoogleFonts.amiri(
-                                  fontSize: 18,
-                                  color:Colors.grey,
-                                    
-                                   fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.7),
-                              textAlign: TextAlign.center,),
-              Radio(
-                 value: 2,
-                  groupValue: _value, 
-                   onChanged: (value){
-                    setState(() {
-                      _value = value;
-                    });
-                  }),
-                Text(widget.two, style: GoogleFonts.amiri(
-                                  fontSize: 18,
-                                  color:Colors.grey,
-                                    
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.7),
-                              textAlign: TextAlign.center,),
-             
+               Radio(
+                   value: 1,
+                    groupValue:_value, 
+                    
+                    onChanged: (value){
+                      setState(() {
+                        _value = value;
+                      });
+                    }),
+                    Text(widget.one, style: GoogleFonts.amiri(
+                                    fontSize: 18,
+                                    color:Colors.grey,
+                                      
+                                     fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.7),
+                                textAlign: TextAlign.center,),
+                Radio(
+                   value: 2,
+                    groupValue: _value, 
+                     onChanged: (value){
+                      setState(() {
+                        _value = value;
+                      });
+                    }),
+                  Text(widget.two, style: GoogleFonts.amiri(
+                                    fontSize: 18,
+                                    color:Colors.grey,
+                                      
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.7),
+                                textAlign: TextAlign.center,),
+               
 
 
           ],),
-       
-        // content: TextField(
-        //   controller: controller,
-
-        //  decoration: InputDecoration(
-        //                   hintStyle: TextStyle(
-        //                       fontWeight: FontWeight.bold, letterSpacing: 1.8),
-                          
-        //                   border: OutlineInputBorder(
-        //                     borderRadius: BorderRadius.circular(20),
-        //                     borderSide: BorderSide(
-        //                         width: 1,
-        //                         style: BorderStyle.solid,
-        //                         color: Colors.grey),
-        //                   ),
-        //                   filled: true,
-        //                   fillColor: Colors.white,
-        //                   contentPadding: EdgeInsets.all(12),
-        //                   enabledBorder: OutlineInputBorder(
-        //                     borderRadius: BorderRadius.circular(20),
-        //                     borderSide: BorderSide(
-        //                         width: 1,
-        //                         style: BorderStyle.solid,
-        //                         color: Colors.grey),
-        //                   ),
-        //                 ),
-                     
-        // ),
-        
-        actions: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Container(
-                 decoration: BoxDecoration(
-                              // gradient: new LinearGradient(
-                              //     colors: [Color.fromRGBO(206, 222, 222, 1), Color.fromRGBO(206, 222, 222, 1)]),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                child: Row(
-                                  children:[ ElevatedButton(
-                    child: Text('حفظ',style: GoogleFonts.amiri(
-                                          fontSize: 18,
-                                          color:Colors.white,
-                                            
-                                          // fontWeight: FontWeight.bold,
-                                          letterSpacing: 1.7),),
-                    onPressed: (){
-
-                      
-                       if( _value == 1){
-                         Navigator.of(context).pop(widget.one);
-                        }
-                        else Navigator.of(context).pop(widget.two);
-
+         Center(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Container(
+                    width: MediaQuery.of(context).size.width * 0.2,
+                height: MediaQuery.of(context).size.height * 0.06,
+                
+                   decoration: BoxDecoration(
+                                gradient: new LinearGradient(
+                                    colors: [Color.fromRGBO(64, 128, 128, 1),Color.fromRGBO(64, 128, 128, 1)]),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                  
+                                    child:InkWell(
+                      child: Center(
+                        child: Text('حفظ',style: GoogleFonts.amiri(
+                                              fontSize: 18,
+                                              color:Colors.white,
+                                                
+                                              // fontWeight: FontWeight.bold,
+                                              letterSpacing: 1.7),),
+                      ),
+                      onTap: (){
 
                         
+                         if( _value == 1){
+                           Navigator.of(context).pop(widget.one);
+                          }
+                          else Navigator.of(context).pop(widget.two);
 
-                      }
 
+                          
+
+                        }
+
+                        
                       
+                      
+                    ),
                     
                     
-                  ),
-                  
-                  
-                                  ]),
+                ),
               ),
-            ),
           ),
-
+],),
+            ),
+         Positioned(
+            top: -108,
+            child: CircleAvatar(
+              backgroundColor:Color.fromRGBO(64, 128, 128, 1),
+              radius: 39,
+              child: 
+                    Icon(Icons.mode_edit, color: Colors.white, size: 30,),
+            )
+          ),
+          ]),
+        actions: [
+         
            
         ],
       );

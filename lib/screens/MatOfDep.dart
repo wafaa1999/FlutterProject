@@ -61,79 +61,7 @@ class _ShowTable1State extends State<ShowTable1> {
      }
 
      }
-     
-    Future getalldata() async {
-    String id = widget.idDep;
-
-    String apiUrl = "https://core-graduation.herokuapp.com/getMatOfSpeDep?idDep=$id&id=$id";
-    String apiUrl2 = "https://core-graduation.herokuapp.com/getAllIsn?idDep=$id";
-     String apiUrl3 = "https://core-graduation.herokuapp.com/getRoomCat?idDep=$id";
-
-   for(int i =0;i< 3 ; i++){
-    
-    if (i ==0){
- final response =
-        await http.get(Uri.parse(apiUrl));
-        
-    if (response.statusCode == 200) {
-  
-        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
-        print(decoded['response'].length);
-
-     for(int i =0; i<decoded['response'].length; i++){
-       allCourses.add(decoded['response'][i]['name']); 
-      
-       }
-   print(allCourses);
-        
-       }
-    }
-    else  if (i == 1){
- final response1 =
-        await http.get(Uri.parse(apiUrl2));
-        
-    if (response1.statusCode == 200) {
-  
-        Map decoded = json.decode(response1.body) as Map<String, dynamic>;; 
-        print(decoded['response'].length);
-
-     for(int i =0; i<decoded['response'].length; i++){
-       allInst.add(decoded['response'][i]['name']); 
-      
-       }
-   print(allInst);
-        
-       }
-    }
-    else  if (i == 2){
- final response2 =
-        await http.get(Uri.parse(apiUrl3));
-        
-    if (response2.statusCode == 200) {
-  
-        Map decoded = json.decode(response2.body) as Map<String, dynamic>;
-        print(decoded['response'].length);
-
-     for(int i =0; i<decoded['response'].length; i++){
-       allRooms.add(decoded['response'][i]['name']); 
-      
-       }
-   print(allRooms);
-        
-       }
-    }
-   
-   
-
-   }
  
-    
-    return 1 ;
-
-    
-
-      }
-      
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +147,7 @@ class _ShowTable1State extends State<ShowTable1> {
                 width: MediaQuery.of(context).size.width * 0.45,
                 decoration: BoxDecoration(
                             gradient: new LinearGradient(
-                                colors: [Colors.grey[700], Colors.grey[700]]),
+                                colors: [Color.fromRGBO(212, 172, 13,1,),Color.fromRGBO(212, 172, 13,1,)]),
                             borderRadius: BorderRadius.circular(30),
                             boxShadow: [
                               BoxShadow(
@@ -247,8 +175,7 @@ class _ShowTable1State extends State<ShowTable1> {
 
                   
                     onTap:()async{
-                     int responce = await getalldata();
-                      if(responce == 1){
+                     
                       Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute<void>(
@@ -259,9 +186,7 @@ class _ShowTable1State extends State<ShowTable1> {
                                         idDep:widget.idDep,
                                         year:widget.year,
                                         tablename: widget.tablename,
-                                        courses:allCourses,
-                                        labs:allRooms,
-                                        inst:allInst
+                                       
 
                                           
 
@@ -269,7 +194,7 @@ class _ShowTable1State extends State<ShowTable1> {
                                       ),
                                     ); 
                      
-                      }
+                      
                       },
                    
                     
@@ -432,7 +357,7 @@ class _ShowTable1State extends State<ShowTable1> {
               
               
               Container(
-                // width: MediaQuery.of(context).size.width * 0.05,
+                width:delete?MediaQuery.of(context).size.width/4.9: MediaQuery.of(context).size.width/4.5,
                 
                   child: Text('$cell',style: GoogleFonts.amiri(
                                       fontSize: 15,
@@ -460,7 +385,7 @@ List<DataColumn> getColumns(List<String> columns) {
       return DataColumn(
         
         label: Padding(
-          padding: widget.courses.isEmpty?EdgeInsets.fromLTRB(20, 0, 25, 0): EdgeInsets.all(10.0),
+          padding: widget.courses.isEmpty?EdgeInsets.fromLTRB(20, 0, 25, 0): column == 'المساق'?EdgeInsets.fromLTRB(0, 0, 40, 0):EdgeInsets.all(7.0),
           child: Text(column, style: GoogleFonts.amiri(
                                     fontSize: 18,
                                     color:Colors.white,

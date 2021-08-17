@@ -50,7 +50,7 @@ class _ShowRoomState extends State<ShowRoom> {
        super.initState();
        for(int i =0 ; i<widget.roomsnames.length;i++){
         rooms.add(Room(widget.roomsnames[i],widget.roomstype[i],widget.roomscamp[i],widget.roomnum[i]));
-        print("'yes'");
+        print(widget.roomnum[i]);
      }
 
      }
@@ -140,7 +140,7 @@ class _ShowRoomState extends State<ShowRoom> {
                 width: MediaQuery.of(context).size.width * 0.45,
                 decoration: BoxDecoration(
                             gradient: new LinearGradient(
-                                colors: [Colors.grey[700], Colors.grey[700]]),
+                                colors: [Color.fromRGBO(212, 172, 13,1,),Color.fromRGBO(212, 172, 13,1,)]),
                             borderRadius: BorderRadius.circular(30),
                             boxShadow: [
                               // BoxShadow(
@@ -513,21 +513,21 @@ List<DataColumn> getColumns(List<String> columns) {
           }
      
         }).toList());
-        if(visited){
-           Dialog alert = showAlert(context,'تم التعديل',0);
-                          showDialog(
-                            context: context,
-                           child:alert,
-                           barrierDismissible: false, );
+        // if(visited){
+        //    Dialog alert = showAlert(context,'تم التعديل',0);
+        //                   showDialog(
+        //                     context: context,
+        //                    child:alert,
+        //                    barrierDismissible: false, );
 
-        }else {
-           Dialog alert = showAlert(context,'التعديل غير صحيح',1);
-                          showDialog(
-                            context: context,
-                           child:alert,
-                           barrierDismissible: false, );
+        // }else {
+        //    Dialog alert = showAlert(context,'التعديل غير صحيح',1);
+        //                   showDialog(
+        //                     context: context,
+        //                    child:alert,
+        //                    barrierDismissible: false, );
 
-        }
+        // }
   }
 
    Future editName(Room editRoom) async {
@@ -558,14 +558,14 @@ List<DataColumn> getColumns(List<String> columns) {
           }
       
         }).toList());
-        if(visit){
-           Dialog alert = showAlert(context,'تم التعديل',0);
-                          showDialog(
-                            context: context,
-                           child:alert,
-                           barrierDismissible: false, );
+        // if(visit){
+        //    Dialog alert = showAlert(context,'تم التعديل',0);
+        //                   showDialog(
+        //                     context: context,
+        //                    child:alert,
+        //                    barrierDismissible: false, );
 
-        }
+        // }
   }
 
 

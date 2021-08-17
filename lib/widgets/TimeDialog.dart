@@ -64,20 +64,14 @@ class _TimeDialogWidgetState extends State<TimeDialogWidget> {
         borderRadius: BorderRadius.circular(20)
       ),
       
-        title: Text(widget.title,style: GoogleFonts.amiri(
-                                  fontSize: 16,
-                                  color:Colors.grey[700],
-                                    
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.7),),
-
-        content: 
+        title: Text(""),
+            content: 
         Stack(
           overflow: Overflow.visible,
         alignment: Alignment.topCenter,
           children:[
         Container(
-          height: 280,
+          height: MediaQuery.of(context).size.height * 0.44,
                   child: Column(
             children: [
                   Padding(
@@ -276,41 +270,29 @@ class _TimeDialogWidgetState extends State<TimeDialogWidget> {
 
            
             ] ),
-         
-
-             
-            ],
-          ),
-        ),
-         Positioned(
-            top: -108,
-            child: CircleAvatar(
-              backgroundColor:Colors.redAccent,
-              radius: 39,
-              child: 
-                    Icon(Icons.check, color: Colors.white, size: 30,),
-            )
-          ),
-          ]),
-        actions: [
-          Center(
+           Center(
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Container(
+                  width: MediaQuery.of(context).size.width * 0.2,
+                height: MediaQuery.of(context).size.height * 0.06,
+               
                  decoration: BoxDecoration(
-                              // gradient: new LinearGradient(
-                              //     colors: [Color.fromRGBO(206, 222, 222, 1), Color.fromRGBO(206, 222, 222, 1)]),
+                              gradient: new LinearGradient(
+                                  colors: [Color.fromRGBO(64, 128, 128, 1),Color.fromRGBO(64, 128, 128, 1)]),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                child: Row(
-                                  children:[ ElevatedButton(
-                    child: Text('حفظ',style: GoogleFonts.amiri(
-                                          fontSize: 16,
-                                          color:Colors.white,
-                                            
-                                          // fontWeight: FontWeight.bold,
-                                          letterSpacing: 1.7),),
-                    onPressed: (){
+                
+                                  child: InkWell(
+                    child: Center(
+                      child: Text('حفظ',style: GoogleFonts.amiri(
+                                            fontSize: 16,
+                                            color:Colors.white,
+                                              
+                                            // fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.7),),
+                    ),
+                    onTap: (){
 
                       
                       String timeSlot = getText() +"/"+ getText2() +'/';
@@ -359,11 +341,28 @@ class _TimeDialogWidgetState extends State<TimeDialogWidget> {
                   ),
                   
                   
-                                  ]),
+                                
               ),
             ),
           ),
 
+        
+
+             
+            ],
+          ),
+        ),
+         Positioned(
+            top: -108,
+            child: CircleAvatar(
+              backgroundColor:Color.fromRGBO(64, 128, 128, 1),
+              radius: 39,
+              child: 
+                    Icon(Icons.check, color: Colors.white, size: 30,),
+            )
+          ),
+          ]),
+        actions: [
            
         ],
       );

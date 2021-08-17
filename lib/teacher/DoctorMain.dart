@@ -1,56 +1,38 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:graduationproject/screens/AddNewMaterial.dart';
-import 'package:graduationproject/screens/planOfMaterials.dart';
-import 'package:graduationproject/screens/showIns.dart';
-import 'package:graduationproject/screens/showRooms.dart';
-import 'package:graduationproject/screens/showtables.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:graduationproject/widgets/Gridwidget.dart';
-// import 'package:graduationproject/widgets/headOfInsHome.dart';
-import 'dart:math';
+import 'package:graduationproject/teacher/chat2.dart';
+import 'package:graduationproject/teacher/finalTableD.dart';
+import 'package:graduationproject/teacher/softCon.dart';
 import 'package:graduationproject/widgets/Gridwidget.dart';
-import 'package:graduationproject/screens/chatPage.dart';
-import 'package:graduationproject/widgets/drawer1.dart';
-import 'package:graduationproject/widgets/search.dart';
+import 'package:graduationproject/widgets/alertDialg.dart';
+import 'package:graduationproject/widgets/drawer2.dart';
 import 'package:graduationproject/widgets/tnoti.dart';
-
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 
-class HeadOfDepMain extends StatefulWidget {
+class DoctorMain extends StatefulWidget {
   final String idDep;
   final String depName;
   final String instName;
-  const HeadOfDepMain({Key key, this.idDep, this.depName, this.instName}) : super(key: key);
+  const DoctorMain({Key key, this.idDep, this.depName, this.instName}) : super(key: key);
    
 
   @override
-  _HeadOfDepMainState createState() => _HeadOfDepMainState();
+  _DoctorMainState createState() => _DoctorMainState();
 }
 
-class _HeadOfDepMainState extends State<HeadOfDepMain> {
-      List<String> roomsnames=[];
-     List<String> roomstype=[];
-     List<String> roomscamp=[];
-    //  List<Room> roomm = [];
-     List<String> tablenames = [];
-     List<String> status = [];
-     List<String> year=[];
-     List<String> roomsnum=[];
-     List<String> instNames = [];
-     List<Inst> insts =[];
-     List<Inst> insts1 =[];
+class _DoctorMainState extends State<DoctorMain> {
      bool wafaa1 = true;
-     String idHead = "";
      bool wafaa2 = true;
      List<NotificationMessage> noti = [];
      bool wafaa = false ;
-       final notifications = FlutterLocalNotificationsPlugin();
-       List<String> semester=[];
+     final notifications = FlutterLocalNotificationsPlugin();
+     List<Inst> insts= [];
+    String doctorId ="";
 
  
  
@@ -71,16 +53,65 @@ class _HeadOfDepMainState extends State<HeadOfDepMain> {
 
     getUser();
     
-  
-    print("mainpage");
-    print(widget.idDep);
-    print(widget.depName);
-    print(widget.instName);
-    
-
-
-    
   }
+    List<String> notes = [];
+    List<String> status = [];
+    List<String> fromTime1 = [];
+    List<String> toTime1 = [];
+    List<String> days1 = [];
+
+  List<String> courseNamesd = [] ;
+  List<String> courseNumbersd = [] ;
+  List<String> daysd = [] ;
+  List<String> toTimed = [] ;
+  List<String> fromTimed = [] ;
+  List<String> roomd = [] ;
+
+  Future getalldata4() async {
+    notes.clear();
+  
+    status.clear();
+    fromTime1.clear();
+    toTime1.clear();
+    days1.clear();
+    String id = '60ddc9735b4d43f8eaaabf83';
+
+    String apiUrl = "https://core-graduation.herokuapp.com/getSoftConst?idDep=${widget.idDep}";
+ final response =
+        await http.get(Uri.parse(apiUrl));
+        
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+          if(decoded['response'][i]['insName'] == widget.instName){
+            status.add(decoded['response'][i]['need']); 
+            notes.add(decoded['response'][i]['note']);
+      List<String> time = [] ;
+      String one = decoded['response'][i]['time'];
+      print(one);
+      time = one.split('/');
+      toTime1.add(time[1]);
+      fromTime1.add(time[0]);
+      days1.add(time[2]);
+
+     
+       }
+     }
+  //  print(inst1);
+   print(status);
+   print(notes);
+}
+    return 1 ;
+
+    
+
+      }
+ 
+    
+
     Future onSelectNotification(String payload){}
  
   // updateNoti
@@ -124,7 +155,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
     final response =
         await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
-        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        Map decoded = json.decode(response.body) as Map<String, dynamic>; 
         print(decoded['response'].length);
 
      for(int i =0; i<decoded['response'].length; i++){
@@ -133,14 +164,14 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
            if (decoded['response'][i]['flag'] == 'true'){
              showSilentNotification(notifications,
                   title: 'تنبيه', body: decoded['response'][i]['note'], id: i);
-           setState(() {
-              wafaa = true;
-           });
-            
-           }
-           else{
+           
              setState(() {
-                wafaa = false;
+               wafaa = true;
+             });
+           }
+           else {
+             setState(() {
+               wafaa = false;
              });
            }
        }
@@ -152,13 +183,13 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
         noti.add(noti1[j]);
         // k++;
       }
-      print(noti);
+      print("notes = ${noti}");
       
        }
        
   
    setState(() {
-    
+  
      wafaa1 =!wafaa1;
    });
  
@@ -180,14 +211,13 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
         print(decoded['response'].length);
 
      for(int i =0; i<decoded['response'].length; i++){
-       if (decoded['response'][i]['idDep'] == widget.idDep && decoded['response'][i]['type'] != 'head of department')
+       if (decoded['response'][i]['idDep'] == widget.idDep && decoded['response'][i]['type'] == 'head of department')
        insts.add(Inst(decoded['response'][i]['name'],decoded['response'][i]['gender'],decoded['response'][i]['id'],decoded['response'][i]['type']));
+       if (decoded['response'][i]['idDep'] == widget.idDep && decoded['response'][i]['name'] == widget.instName)
+           doctorId = decoded['response'][i]['id'];
      
-       if (decoded['response'][i]['idDep'] != widget.idDep && decoded['response'][i]['type'] == 'head of department')
-       insts.add(Inst(decoded['response'][i]['name'],decoded['response'][i]['gender'],decoded['response'][i]['id'],decoded['response'][i]['type']));
        
-       if (decoded['response'][i]['idDep'] == widget.idDep && decoded['response'][i]['type'] == 'head of department') 
-       idHead = decoded['response'][i]['id'];
+      
 
 
        }
@@ -195,7 +225,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
       
        }
       
-       insts1 = insts;
+     
    print(insts);
    setState(() {
      wafaa1 =!wafaa1;
@@ -208,104 +238,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
       }
  
 
-     Future getInst() async {
-
-    print(widget.idDep);
-    final String apiUrl = "https://core-graduation.herokuapp.com/getAllIsn?idDep=${widget.idDep}";
-    final response =
-        await http.get(Uri.parse(apiUrl));
-    if (response.statusCode == 200) {
-        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
-        print(decoded['response'].length);
-
-     for(int i =0; i<decoded['response'].length; i++){
-       instNames.add(decoded['response'][i]['name']);  
-      
-
-
-       }
-      
-       }
-   print(instNames);
  
-    return 1 ;
-
-    
-
-      }
- 
-      Future getroomsall() async {
-        roomsnames.clear();
-        roomstype.clear();
-
-        roomscamp.clear();
-        roomsnum.clear();
-
-        
-
-    print(widget.idDep);
-    final String apiUrl = "https://core-graduation.herokuapp.com/getRoomsofDep?idDep=${widget.idDep}";
-    final response =
-        await http.get(Uri.parse(apiUrl));
-    if (response.statusCode == 200) {
-        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
-        print(decoded['response'].length);
-
-     for(int i =0; i<decoded['response'].length; i++){
-       roomsnames.add(decoded['response'][i]['number']);  
-       roomstype.add(decoded['response'][i]['type']);
-       roomscamp.add(decoded['response'][i]['campous']);
-       roomsnum.add(decoded['response'][i]['name']);
-
-
-       }
-      
-       }
-   print(roomsnames);
-   print(roomstype);
-   print(roomscamp);
-   print(roomsnum);
-    return 1 ;
-
-    
-
-      }
-
-    Future getalltables() async {
-
-
-    print(widget.idDep);
-    final String apiUrl = "https://core-graduation.herokuapp.com/getTables?idDep=${widget.idDep}";
-    final response =
-        await http.get(Uri.parse(apiUrl));
-
-    if (response.statusCode == 200) {
-  
-        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
-        print(decoded['response'].length);
-
-     for(int i =0; i<decoded['response'].length; i++){
-       tablenames.add(decoded['response'][i]['name']);  
-       status.add(decoded['response'][i]['status']);
-       year.add(decoded['response'][i]['year']);
-       semester.add(decoded['response'][i]['semester']);
-      //  semester
-
-      
-       }
-     print(tablenames);
-     print(status);
-        
-       }
-    return 1 ;
-
-    
-
-      }
-    
-            // bool wafaa = true;
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -326,9 +259,9 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                 child: Scaffold(
                   
             //  endDrawer: new AppDrawer(), // right side
-             drawer: AppDrawer(
-               idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
-               ),
+          drawer: AppDrawer2(
+             idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
+             ),
             //  widget.idDep
 
             appBar:AppBar(
@@ -454,54 +387,72 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                     children: <Widget>[
                       InkWell(
 
-                        onTap:(){
+                        onTap:()async{
                           getNotification();
-                             
+                            int res = await getalldata4();
+                          if(res == 1) {
 
                           Navigator.push(
                                     context,
                                     MaterialPageRoute<void>(
                                       builder: (BuildContext context) =>
-                                         PlanOfMaterials(
-                                        idDep:widget.idDep,
+                                         ShowSoftCon(
                                         instName: widget.instName,
                                         depName: widget.depName,
+                                        idDep:widget.idDep,
+                                    
+
+                                        status:status,
+                                        
+                                        days:days1,
+                                        fromTime:fromTime1,
+                                        toTime:toTime1,
+                                       
+                                        notes: notes,
                                         
                                       ),
                                     ),
                                   ); 
-
+                          }
                         } ,
-                         child: Gridwidget(svgScr:"assets/images/books.svg",
-                        title:"المساقات"),
+                         child: Gridwidget(svgScr:"assets/images/doc.svg",
+                        title:" ملاحظات "),
                       ),
                       
                        InkWell(
                          onTap: ()async{
-                           tablenames.clear();
-                           status.clear();
-                           year.clear();
-                             int responce = await getalltables();
-                           if(responce == 1){
-                             getNotification();
-                           
-
-                            Navigator.push(
+                        int inm = await getFinalDataTable();
+         if(inm == 1){
+             Navigator.push(
                                     context,
                                     MaterialPageRoute<void>(
                                       builder: (BuildContext context) =>
-                                         AllTableshow(
+                                         ShowFinalTableD(
+
                                         idDep:widget.idDep,
-                                        instName: widget.instName,
-                                        depName: widget.depName,
-                                        tablenames:tablenames,
-                                        status:status,
-                                        year:year ,
-                                        semster:semester
+                                        instName:widget.instName,
+                                        depName:widget.depName,
+                          
+                                        courseNumbers :courseNumbersd,
+                                        courseNames :courseNamesd,
+                                        room:roomd,
+                                        fromTime:fromTimed,
+                                        toTime:toTimed,
+                                        days:daysd,
+                                        
+      
                                       ),
                                     ),
-                                  ); 
-                           }
+             );
+         
+         }else {  
+          Dialog alert = showAlert(context,'لم يتم انشاء الجدول الرجاء الانتظار',0);
+                          showDialog(
+                            context: context,
+                           child:alert,
+                           barrierDismissible: false, );
+         }
+
                          },
                            
 
@@ -511,64 +462,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                       title:"الجدول الدراسي"),
                        ),
 
-                       InkWell(
-                         onTap: ()async{
-                           int responce = await getroomsall();
-                           if(responce == 1){
-                             getNotification();
-                           
-
-                            Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (BuildContext context) =>
-                                         ShowRoom(
-                                        idDep:widget.idDep,
-                                        instName: widget.instName,
-                                        depName: widget.depName,
-                                        roomsnames:roomsnames,
-                                        roomscamp:roomscamp,
-                                        roomstype:roomstype,
-                                        roomnum: roomsnum,
-                                        
-                                      ),
-                                    ),
-                                  ); 
-                           }
-                         },
-                      child: Gridwidget(svgScr:"assets/images/room.svg",
-                      title:"القاعات"),
-                       ),
-
-                       InkWell(
-                         onTap: ()async{
-                           
-                           instNames.clear();
-                           int response = await getInst();
-                           if(response ==1){
-                             getNotification();
-                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (BuildContext context) =>
-                                         ShowInst(
-                                        idDep:widget.idDep,
-                                        instName: widget.instName,
-                                        depName: widget.depName,
-                                        instNames: instNames
-                                        
-                                      ),
-                                    ),
-                                  ); 
-
-                           }
-
-
-
-                         },
-                       child: Gridwidget(svgScr:"assets/images/teacher.svg",
-                      title:"المدرسين"),
-                       ),
+                   
 
 
 
@@ -598,13 +492,11 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
    return  Scaffold(
      body:Column(
        children:
-        [  if (wafaa1)
-           buildSearch(),
+        [ 
            if (wafaa1)
            buildbuildInstOfDep(context),
             
-           if (!wafaa1)
-           buildSearch(),
+           
            if (!wafaa1)
            buildbuildInstOfDep(context)]),
         
@@ -630,11 +522,7 @@ Widget buildNotification(BuildContext context) {
  }
 
 
-  Widget buildSearch() => SearchWidget(
-        text: query,
-        hintText: 'ادخل اسم المدرس',
-        onChanged: searchInst,
-      );
+ 
 
    Widget buildbuildNotOfDep(BuildContext context) {
  return Expanded(
@@ -674,7 +562,8 @@ Widget buildNotification(BuildContext context) {
                 
                   leading: CircleAvatar(
                     radius: 40,
-                    backgroundImage:AssetImage('assets/images/not.jfif' ),
+                    backgroundImage:user.from == 'head'?  AssetImage('assets/images/not.jfif' ):
+                     AssetImage('assets/images/app.jpg' ),
                   ),
                   title: Column(
                                         children:[Text(user.note ,style: GoogleFonts.amiri(
@@ -740,83 +629,107 @@ Widget buildNotification(BuildContext context) {
  }
 
   Widget buildChats() { 
-    return ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemBuilder: (context, index) {
-          final user = insts[index];
-
-          return Column(
-                      children: [Container(
-              height: 75,
-              child: InkWell(
-               
-                            child: ListTile(
-                  onTap: () {
-                    print(idHead);
-                    print(user.id);
-
-                  Navigator.push(
-                    
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (BuildContext context) =>
-                                         Chatpage(
-                                        idDep:widget.idDep,
-                                        instName: widget.instName,
-                                        depName: widget.depName,
-                                        instId:user.id,
-                                        headId:idHead,
-                                        gender:user.gender,
-                                        doctorN:user.name
-                                        
-                                        
-                                      ),
-                                    ),
-                                  ); 
-                    
-
-                  },
-                  leading: CircleAvatar(
-                    radius: 35,
-                    backgroundImage: user.gender == 'ذكر'?AssetImage('assets/images/1.jpg'):
-                    AssetImage('assets/images/2.jpg'),
+   
+        return ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              final user = insts[index];
+    
+              return Column(
+                          children: [Container(
+                  height: 75,
+                  child: InkWell(
+                   
+                                child: ListTile(
+                      onTap: () {
+                      
+                        print(user.id);
+    
+                      Navigator.push(
+                        
+                                        context,
+                                        MaterialPageRoute<void>(
+                                          builder: (BuildContext context) =>
+                                             Chatpage2(
+                                            idDep:widget.idDep,
+                                            instName: widget.instName,
+                                            depName: widget.depName,
+                                            instId:doctorId,
+                                            headId:user.id,
+                                            gender:user.gender,
+                                            doctorN:user.name
+                                            
+                                            
+                                          ),
+                                        ),
+                                      ); 
+                        
+    
+                      },
+                      leading: CircleAvatar(
+                        radius: 35,
+                        backgroundImage: user.gender == 'ذكر'?AssetImage('assets/images/1.jpg'):
+                        AssetImage('assets/images/2.jpg'),
+                      ),
+                      title: Text(user.name ,style: GoogleFonts.amiri(
+                                                    fontSize: 18,
+                                                    color:Colors.black,
+                                                      
+                                                    // fontWeight: FontWeight.bold,
+                                                    letterSpacing: 1.7,
+                                                  //  / height: 1.32,
+                                                    ),),
+                    ),
                   ),
-                  title: Text(user.name ,style: GoogleFonts.amiri(
-                                                fontSize: 18,
-                                                color:Colors.black,
-                                                  
-                                                // fontWeight: FontWeight.bold,
-                                                letterSpacing: 1.7,
-                                              //  / height: 1.32,
-                                                ),),
+                  
                 ),
-              ),
-              
-            ),
-                    Divider(thickness: 1,),  ]);
-        },
-        itemCount: insts.length,
+                        Divider(thickness: 1,),  ]);
+            },
+            itemCount: insts.length,
       );
   }
   
-  
-  void searchInst(String query) {
-    insts = insts1;
-    final searchedInst = insts.where((inst) {
-      final name = inst.name;
-      final searchLower = query;
-
-      return name.contains(searchLower);
-    }).toList();
-      setState(() {
-      this.query = query;
-      this.insts = searchedInst; 
-    });
+Future getFinalDataTable()async{
 
   
-  }
+  courseNamesd.clear();
+  courseNumbersd.clear();
+  daysd.clear();
+  toTimed.clear();
+  fromTimed.clear();
+  roomd.clear();
 
-  
+
+
+
+
+   String apiUrl = "https://core-graduation.herokuapp.com/getDataFromApprovalOfDep?idDep=${widget.idDep}";
+   print(apiUrl);
+  final response =
+        await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      Map decoded = json.decode(response.body) ; 
+      print(decoded);
+      for(int i =0; i<decoded['response'].length; i++){
+        if(decoded['response'][i]['instName'] == widget.instName){
+            courseNamesd.add(decoded['response'][i]['courseName']); 
+            courseNumbersd.add(decoded['response'][i]['courseNumber']); 
+            daysd.add(decoded['response'][i]['days']); 
+            toTimed.add(decoded['response'][i]['endHour']); 
+            fromTimed.add(decoded['response'][i]['startHour']); 
+            roomd.add(decoded['response'][i]['roomNumber']); 
+           
+
+      }}
+   
+    
+    }
+    if( roomd.length == 0){
+      return -1;
+    }
+    return 1;
+}
+
 
    
 }

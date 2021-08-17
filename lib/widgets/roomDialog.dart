@@ -57,22 +57,28 @@ class _RoomDialogWidgetState extends State<RoomDialogWidget> {
         borderRadius: BorderRadius.circular(20)
       ),
       
-        title: Text(widget.title,style: GoogleFonts.amiri(
+        title:Text(""),
+         content: 
+        Stack(
+          overflow: Overflow.visible,
+        alignment: Alignment.topCenter,
+          children:[
+        Container(
+
+          height: without ? MediaQuery.of(context).size.height *0.2:
+          MediaQuery.of(context).size.height *0.28,
+                  child: Column(
+                    
+            children: [
+               Text(widget.title,style: GoogleFonts.amiri(
                                   fontSize: 16,
                                   color:Colors.grey[700],
                                     
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.7),),
 
-        content: 
-        Stack(
-          overflow: Overflow.visible,
-        alignment: Alignment.topCenter,
-          children:[
-        Container(
-          height: without ? 50:120,
-                  child: Column(
-            children: [
+       
+
               Row(children: [
 
                Radio(
@@ -195,39 +201,29 @@ class _RoomDialogWidgetState extends State<RoomDialogWidget> {
               ):
               SizedBox(height: 0,),
         
-               
-            ],
-          ),
-        ),
-         Positioned(
-            top: -108,
-            child: CircleAvatar(
-              backgroundColor:Colors.redAccent,
-              radius: 39,
-              child: 
-                    Icon(Icons.check, color: Colors.white, size: 30,),
-            )
-          ),
-          ]),
-        actions: [
-          Center(
+                Center(
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Container(
+                 width: MediaQuery.of(context).size.width * 0.2,
+                height: MediaQuery.of(context).size.height * 0.06,
+                
                  decoration: BoxDecoration(
-                              // gradient: new LinearGradient(
-                              //     colors: [Color.fromRGBO(206, 222, 222, 1), Color.fromRGBO(206, 222, 222, 1)]),
+                              gradient: new LinearGradient(
+                                  colors: [Color.fromRGBO(64, 128, 128, 1),Color.fromRGBO(64, 128, 128, 1)]),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                child: Row(
-                                  children:[ ElevatedButton(
-                    child: Text('حفظ',style: GoogleFonts.amiri(
-                                          fontSize: 16,
-                                          color:Colors.white,
-                                            
-                                          // fontWeight: FontWeight.bold,
-                                          letterSpacing: 1.7),),
-                    onPressed: (){
+                
+                                  child: InkWell(
+                    child: Center(
+                      child: Text('حفظ',style: GoogleFonts.amiri(
+                                            fontSize: 16,
+                                            color:Colors.white,
+                                              
+                                            // fontWeight: FontWeight.bold,
+                                            letterSpacing: 1.7),),
+                    ),
+                    onTap: (){
 
                       
                        if( _value == 1){
@@ -249,10 +245,25 @@ class _RoomDialogWidgetState extends State<RoomDialogWidget> {
                   ),
                   
                   
-                                  ]),
+                                 
               ),
             ),
           ),
+            ],
+          ),
+        ),
+         Positioned(
+            top: -108,
+            child: CircleAvatar(
+              backgroundColor:Color.fromRGBO(64, 128, 128, 1),
+              radius: 39,
+              child: 
+                    Icon(Icons.mode_edit, color: Colors.white, size: 30,),
+            )
+          ),
+          ]),
+        actions: [
+         
 
            
         ],

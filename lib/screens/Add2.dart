@@ -14,10 +14,9 @@ class AddTable2 extends StatefulWidget {
   final String depName;
   final String year;
   final String tablename;
-  final List<String> depNames;
-  final List<String> idDeps;
+  
 
-  const AddTable2({Key key, this.instName, this.depName, this.year, this.tablename, this.depNames, this.idDep, this.idDeps}) : super(key: key);
+  const AddTable2({Key key, this.instName, this.depName, this.year, this.tablename,  this.idDep}) : super(key: key);
 
   @override
   _AddTable2State createState() => _AddTable2State();
@@ -56,14 +55,43 @@ class _AddTable2State extends State<AddTable2> {
      @override
      void initState() { 
        super.initState();
-       for(int i =0; i <widget.idDeps.length;i++){
-         if(widget.idDep != widget.idDeps[i]){
-           depNames1.add(widget.depNames[i]);
-           idDeps1.add(widget.idDeps[i]);
-         }
+       getdep();
+      }
 
+   Future getdep() async {
+    String id = '60ddc9735b4d43f8eaaabf83';
+    String apiUrl = "https://core-graduation.herokuapp.com/getAllDep";
+    final response =
+        await http.get(Uri.parse(apiUrl));
+        
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       setState(() {
+         idDeps1.add(decoded['response'][i]['idDepartment']); 
+       depNames1.add(decoded['response'][i]['name']); 
+       });
+       
+
+      
        }
-     }
+       idDeps1.add('0');
+       depNames1.add('لم يتم اختياره');
+   print(idDeps1);
+  //  print(depNames);
+  
+        
+       
+    }
+    return 1;
+
+   }
+ 
+    
+
 
              
       Future getValues() async {
@@ -834,9 +862,9 @@ class _AddTable2State extends State<AddTable2> {
          days1.add(arr[2]);
          print (arr[0]);
         String departid =(decoded['response'][i]['orignaldep']);
-        for(int k =0;k<widget.idDeps.length;k++){
-          if(departid == widget.idDeps[k]){
-            dep.add(widget.depNames[k]);
+        for(int k =0;k<idDeps1.length;k++){
+          if(departid == idDeps1[k]){
+            dep.add(depNames1[k]);
             break;
           }
         }

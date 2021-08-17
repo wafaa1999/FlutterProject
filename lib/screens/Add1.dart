@@ -14,11 +14,9 @@ final String depName;
 final String instName;
 final String tablename;
 final String year;
-final List<String> courses;
-final List<String> labs;
-final List<String> inst;
 
-  const AddTable1({Key key, this.courses, this.labs, this.inst, this.idDep, this.depName, this.instName, this.tablename, this.year}) : super(key: key);
+
+  const AddTable1({Key key, this.idDep, this.depName, this.instName, this.tablename, this.year}) : super(key: key);
 
   // const AddTable1({Key key, this.idDep, this.depName, this.instName, this.tablename, this.year, this.courses, this.labs, this.inst}) : super(key: key);
 
@@ -41,18 +39,101 @@ class _AddTable1State extends State<AddTable1> {
      String courseSelected="لم يتم اختياره";
      int _value1 = 0;
      bool show = false;
+    
 
     @override
     void initState() { 
       super.initState();
       print(widget.tablename);
-      widget.inst.add("لم يتم اختياره");
-      widget.courses.add("لم يتم اختياره");
-      widget.labs.add("لم يتم اختياره");
+      getalldata2();
+      inst.add("لم يتم اختياره");
+      courses.add("لم يتم اختياره");
+      labs.add("لم يتم اختياره");
 
       
       
     }
+
+        
+    Future getalldata2() async {
+    String id = widget.idDep;
+
+    String apiUrl = "https://core-graduation.herokuapp.com/getMatOfSpeDep?idDep=$id&id=$id";
+    String apiUrl2 = "https://core-graduation.herokuapp.com/getAllIsn?idDep=$id";
+     String apiUrl3 = "https://core-graduation.herokuapp.com/getRoomCat?idDep=$id";
+
+   for(int i =0;i< 3 ; i++){
+    
+    if (i ==0){
+ final response =
+        await http.get(Uri.parse(apiUrl));
+        
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+             setState(() {
+                      courses.add(decoded['response'][i]['name']); 
+
+             });      
+       }
+   print(courses);
+        
+       }
+    }
+    else  if (i == 1){
+ final response1 =
+        await http.get(Uri.parse(apiUrl2));
+        
+    if (response1.statusCode == 200) {
+  
+        Map decoded = json.decode(response1.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       setState(() {
+         inst.add(decoded['response'][i]['name']);
+       });
+        
+      
+       }
+   print(inst);
+        
+       }
+    }
+      else  if (i == 2){
+ final response2 =
+        await http.get(Uri.parse(apiUrl3));
+        
+    if (response2.statusCode == 200) {
+  
+        Map decoded = json.decode(response2.body) as Map<String, dynamic>;
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       setState(() {
+         labs.add(decoded['response'][i]['name']);
+       }); 
+      
+       }
+   print(labs);
+        
+       }
+    }
+
+   
+
+   }
+ 
+    
+    return 1 ;
+
+    
+
+      }
+      
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +269,7 @@ class _AddTable1State extends State<AddTable1> {
                                             // fontWeight: FontWeight.bold,
                                             letterSpacing: 1.7),
 
-                    items: widget.courses.map((String dropDown){
+                    items: courses.map((String dropDown){
 
                       return DropdownMenuItem<String>(
                         
@@ -242,7 +323,7 @@ class _AddTable1State extends State<AddTable1> {
                                             // fontWeight: FontWeight.bold,
                                             letterSpacing: 1.7),
 
-                    items: widget.inst.map((String dropDown){
+                    items: inst.map((String dropDown){
 
                       return DropdownMenuItem<String>(
                         
@@ -350,7 +431,7 @@ class _AddTable1State extends State<AddTable1> {
                                             // fontWeight: FontWeight.bold,
                                             letterSpacing: 1.7),
 
-                    items: widget.labs.map((String dropDown){
+                    items:labs.map((String dropDown){
 
                       return DropdownMenuItem<String>(
                         

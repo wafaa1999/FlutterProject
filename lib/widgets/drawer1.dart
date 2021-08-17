@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graduationproject/screens/AddNewMaterial.dart';
 import 'package:graduationproject/screens/HeadOfDepMain.dart';
@@ -32,6 +33,8 @@ class AppDrawer extends StatefulWidget {
 //                                   ); 
 
 class _AppDrawerState extends State<AppDrawer> {
+    final notifications = FlutterLocalNotificationsPlugin();
+
     List<String> roomsnames=[];
      List<String> roomstype=[];
      List<String> roomscamp=[];
@@ -39,7 +42,8 @@ class _AppDrawerState extends State<AppDrawer> {
      List<String> status = [];
      List<String> year=[];
      List<String> roomsnum=[];
-     List<String> instNames = [];
+     List<String> instNames = []; 
+     List<String> sem = [];
          Future getInst() async {
 
     print(widget.idDep);
@@ -113,6 +117,7 @@ class _AppDrawerState extends State<AppDrawer> {
        tablenames.add(decoded['response'][i]['name']);  
        status.add(decoded['response'][i]['status']);
        year.add(decoded['response'][i]['year']);
+       sem.add(decoded['response'][i]['semster']);
 
       
        }
@@ -126,6 +131,23 @@ class _AppDrawerState extends State<AppDrawer> {
 
       }
     
+    @override
+    void initState() { 
+      super.initState();
+      final settingsAndroid = AndroidInitializationSettings('app_icon');
+    final settingsIOS = IOSInitializationSettings(
+        onDidReceiveLocalNotification: (id, title, body, payload) =>
+            onSelectNotification(payload));
+
+    notifications.initialize(
+        InitializationSettings(settingsAndroid, settingsIOS),
+        onSelectNotification: onSelectNotification);
+    }
+
+     Future onSelectNotification(String payload){
+
+     }
+
  
   @override
 
@@ -327,7 +349,8 @@ onTap: ()async{
                                         depName: widget.depName,
                                         tablenames:tablenames,
                                         status:status,
-                                        year:year 
+                                        year:year,
+                                        semster: sem, 
                                       ),
                                     ),
                                   ); 
@@ -398,6 +421,7 @@ onTap: ()async{
                 InkWell(
 
                onTap:() =>{
+                  // notifications.cancelAll,
                  Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute<void>(

@@ -193,7 +193,7 @@ return 1 ;
             // scrollDirection: Axis.horizontal,
             // child:
             Column(children:[
-                                    SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
+                                    // SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
 
            
               Container(
@@ -377,7 +377,7 @@ List<DataColumn> getColumns(List<String> columns) {
         
         label: Padding(
           padding:widget.notes.isEmpty?EdgeInsets.fromLTRB(25, 0, 30, 0)
-          : column =='المدرس'?delete?const EdgeInsets.fromLTRB(0, 0, 30, 0):const EdgeInsets.fromLTRB(0, 0, 30, 0):column =='الوقت'?const EdgeInsets.fromLTRB(0, 0, 30, 0):const EdgeInsets.all(2.0),
+          : column =='المدرس'?delete?const EdgeInsets.fromLTRB(0, 0, 30, 0):const EdgeInsets.fromLTRB(0, 0, 30, 0):column =='الوقت'?const EdgeInsets.fromLTRB(0, 0, 30, 0):const EdgeInsets.all(5.0),
           child: Text(column, style: GoogleFonts.amiri(
                                     fontSize: 18,
                                     color:Colors.white,

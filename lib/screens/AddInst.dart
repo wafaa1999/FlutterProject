@@ -23,6 +23,7 @@ class _AddInstState extends State<AddInst> {
     
     final _number = TextEditingController();
     final _name = TextEditingController();
+    int _value = 0;
 
      List<String> instNames = [];
   
@@ -62,9 +63,14 @@ class _AddInstState extends State<AddInst> {
  
 
   Future addInsts() async {
+    String gender = "";
+    if(_value ==1){
+      gender ="ذكر";
+    }
+    else  gender ="انثى";
 
     print(widget.idDep);
-    final String apiUrl = "https://core-graduation.herokuapp.com/addInstToDepartment?idDep=${widget.idDep}&name=${_name.text}";
+    final String apiUrl = "https://core-graduation.herokuapp.com/addInstToDepartment?idDep=${widget.idDep}&name=${_name.text}&email=${_number.text}&gender=$gender";
     print(apiUrl);
     final response =
         await http.get(Uri.parse(apiUrl));
@@ -176,65 +182,7 @@ class _AddInstState extends State<AddInst> {
           ),
           SizedBox(height :height *0.03),
 
-           Row(
-            children: [
-              SizedBox(height :height *0.03),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Container(
            
-                  child: Text("رقم المدرس",style: GoogleFonts.amiri(
-                                      fontSize: 18,
-                                      color:Colors.grey[600],
-                                        
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.7),),
-                ),
-              ),
-
-
-
-
-                  Container(
-                    width: width * 0.6,
-                    height: height * 0.06,
-                   
-                    child: TextField(
-                      
-                       controller: _number,
-                        textAlign: TextAlign.right,
-                        keyboardType: TextInputType.number,
-                         
-                        decoration: InputDecoration(
-                          hintStyle: TextStyle(
-                              fontWeight: FontWeight.bold, letterSpacing: 1.8),
-                          
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(2),
-                            borderSide: BorderSide(
-                                width: 1,
-                                style: BorderStyle.solid,
-                                color: Colors.grey),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: EdgeInsets.all(12),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(2),
-                            borderSide: BorderSide(
-                                width: 1,
-                                style: BorderStyle.solid,
-                                color: Colors.grey),
-                          ),
-                        ),
-                     
-                        ),
-                        
-                  ),
-            ],
-
-          ),
-          SizedBox(height: 15,),
              Row(
             children: [
               SizedBox(height :height *0.03),
@@ -293,7 +241,134 @@ class _AddInstState extends State<AddInst> {
             ],
 
           ),
-     
+    
+    SizedBox(height: height *0.02,),
+     Row(
+            children: [
+              SizedBox(height :height *0.03),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Container(
+           
+                  child: Text("الايميل",style: GoogleFonts.amiri(
+                                      fontSize: 18,
+                                      color:Colors.grey[600],
+                                        
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.7),),
+                ),
+              ),
+
+
+
+
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                    child: Container(
+                      width: width * 0.6,
+                      height: height * 0.06,
+                     
+                      child: TextField(
+                        
+                         controller: _number,
+                          textAlign: TextAlign.right,
+                          keyboardType: TextInputType.emailAddress,
+                           
+                          decoration: InputDecoration(
+                            hintStyle: TextStyle(
+                                fontWeight: FontWeight.bold, letterSpacing: 1.8),
+                            
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(2),
+                              borderSide: BorderSide(
+                                  width: 1,
+                                  style: BorderStyle.solid,
+                                  color: Colors.grey),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: EdgeInsets.all(12),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(2),
+                              borderSide: BorderSide(
+                                  width: 1,
+                                  style: BorderStyle.solid,
+                                  color: Colors.grey),
+                            ),
+                          ),
+                       
+                          ),
+                          
+                    ),
+                  ),
+
+                  
+            ],
+           
+          ),
+           Row(children: [
+                 Padding(
+             padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+             child: Row(children: [
+               Text("الجنس",style: GoogleFonts.amiri(
+                                              fontSize: 18,
+                                              color:Colors.black,
+                                                
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 1.7)
+),
+               
+               Padding(
+                 padding: const EdgeInsets.all(8.0),
+                 child: Radio(
+                   
+
+                   
+                   value: 1,
+                    groupValue:_value, 
+                    
+                    onChanged: (value){
+                      setState(() {
+                        _value = value;
+                      });
+                    }),
+               ),
+                  Text("ذكر", style: GoogleFonts.amiri(
+                                  fontSize: 16,
+                                  color:Colors.black,
+                                    
+                                  // fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.7),
+                              textAlign: TextAlign.center,),
+               
+               SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Radio(
+                   value: 2,
+                    groupValue: _value, 
+                     onChanged: (value){
+                      setState(() {
+                        _value = value;
+                      });
+                    }),
+              ),
+                Text("انثى", style: GoogleFonts.amiri(
+                                  fontSize: 16,
+                                  color:Colors.black,
+                                    
+                                  // fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.7),
+                              textAlign: TextAlign.center,),
+             
+             
+             
+             ],),
+           ),
+        
+            ],),
+
+          SizedBox(height: 15,),
          Row(children: [
           SizedBox(height: height * 0.1,),
          Padding(
@@ -334,6 +409,7 @@ class _AddInstState extends State<AddInst> {
                            show = false;
                            _number.clear();
                            _name.clear();
+                           _value =0;
                          });
 
                            }
@@ -350,6 +426,7 @@ class _AddInstState extends State<AddInst> {
                            show = false;
                            _number.clear();
                            _name.clear();
+                            _value =0;
                          });
 
 

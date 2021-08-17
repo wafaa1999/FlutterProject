@@ -36,7 +36,7 @@ Dialog showAlert( BuildContext context,String str ,int one) {
                     Navigator.of(context).pop();
                   },
                   shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(30)),
-                    color:one ==1?Colors.redAccent:Colors.greenAccent,
+                    color:one ==1?Colors.redAccent:Color.fromRGBO(64, 128, 128, 1),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text('اغلاق', style: GoogleFonts.amiri(color: Colors.white),),
@@ -49,7 +49,7 @@ Dialog showAlert( BuildContext context,String str ,int one) {
           Positioned(
             top: -30,
             child: CircleAvatar(
-              backgroundColor: one==1?Colors.redAccent:Colors.greenAccent,
+              backgroundColor: one==1?Colors.redAccent:Color.fromRGBO(64, 128, 128, 1),
               radius: 35,
               child: one == 1?Icon(Icons.close, color: Colors.white, size: 30,):
                     Icon(Icons.check, color: Colors.white, size: 30,),

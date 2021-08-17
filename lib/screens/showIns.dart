@@ -127,7 +127,7 @@ class _ShowInstState extends State<ShowInst> {
                 width: MediaQuery.of(context).size.width * 0.45,
                 decoration: BoxDecoration(
                             gradient: new LinearGradient(
-                                colors: [Colors.grey[700], Colors.grey[700]]),
+                                colors: [Color.fromRGBO(212, 172, 13,1,),Color.fromRGBO(212, 172, 13,1,)]),
                             borderRadius: BorderRadius.circular(30),
                             boxShadow: [
                               // BoxShadow(
@@ -207,7 +207,9 @@ class _ShowInstState extends State<ShowInst> {
     return DataTable(
       headingRowColor: MaterialStateColor.resolveWith((states) {
   
-             return Color.fromRGBO(79, 84, 103, 1); //make tha magic!
+             return Color.fromRGBO(79, 84, 103, 1); 
+              //make tha magic!
+              // كموني بال int 
               }),
               
                horizontalMargin: 2,

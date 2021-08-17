@@ -15,8 +15,9 @@ class AllTableshow extends StatefulWidget {
   final List<String> tablenames;
   final List<String> status;
   final List<String> year;
+  final List<String> semster;
 
-  const AllTableshow({Key key, this.idDep, this.instName, this.depName, this.tablenames, this.status, this.year}) : super(key: key);
+  const AllTableshow({Key key, this.idDep, this.instName, this.depName, this.tablenames, this.status, this.year, this.semster}) : super(key: key);
 
   @override
   _AllTableshowState createState() => _AllTableshowState();
@@ -38,13 +39,14 @@ class _AllTableshowState extends State<AllTableshow> {
    List<String> fromTime =[];
    List<String> toTime =[];
    List<String> days =[];
+   List<int> classConflict= [];
 
   @override
   void initState() { 
     
     super.initState();
     for(int i =0 ; i<widget.tablenames.length;i++){
-        items.add(ListItem(widget.tablenames[i],widget.year[i],widget.status[i]));
+        items.add(ListItem(widget.tablenames[i],widget.year[i],widget.status[i],widget.semster[i]));
         
         
        }
@@ -79,6 +81,15 @@ Future deleteFunction(String tableName)async{
 }
 
 Future getFinalDataTable(String tableName)async{
+courseNames.clear();
+courseNumbers.clear();
+days.clear();
+toTime.clear();
+fromTime.clear();
+insts.clear();
+roomtype.clear();
+room.clear();
+classConflict.clear();
 
   
   
@@ -99,10 +110,12 @@ Future getFinalDataTable(String tableName)async{
             insts.add(decoded['response'][i]['instName']); 
             roomtype.add(decoded['response'][i]['roomType']); 
             room.add(decoded['response'][i]['roomNumber']); 
+            classConflict.add(decoded['response'][i]['classConflict']); 
 
       }
       print(courseNames);
       print(courseNumbers);
+      print(classConflict);
       
     
     }
@@ -199,7 +212,7 @@ Future getFinalDataTable(String tableName)async{
          if (items[index].type =='done'){
          int inm = await getFinalDataTable(items[index].title);
          if(inm == 1){
-             Navigator.pushReplacement(
+             Navigator.push(
                                     context,
                                     MaterialPageRoute<void>(
                                       builder: (BuildContext context) =>
@@ -218,6 +231,7 @@ Future getFinalDataTable(String tableName)async{
                                         fromTime:fromTime,
                                         toTime:toTime,
                                         days:days,
+                                        classConflict:classConflict
       
                                       ),
                                     ),
@@ -237,6 +251,7 @@ Future getFinalDataTable(String tableName)async{
                                         depName:widget.depName,
                                         tableName:items[index].title,
                                         year: items[index].year,
+                                        sem: items[index].sem,
 
 
                                     
@@ -392,12 +407,13 @@ PopupMenuItem<MenuItem1> bulideritem1(MenuItem1 item)=>PopupMenuItem<MenuItem1>(
                                     padding: const EdgeInsets.all(0.0),
                                     child: Card(
                                       
-                                      color: Color.fromRGBO(33, 84, 84,1,),
+                                      // color: Color.fromRGBO(33, 84, 84,1,),
                                     
                                       shape: RoundedRectangleBorder(
                                         side:
-                                            BorderSide(color:Colors.white, width: 2),
-                                        borderRadius: BorderRadius.circular(5),
+                                        // ******************
+                                            index %2 == 1?BorderSide(color:Color.fromRGBO(33, 84, 84, 1), width: 2):BorderSide(color:Color.fromRGBO(212, 172, 13,1,), width: 2),
+                                        borderRadius: BorderRadius.circular(40),
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
@@ -409,22 +425,22 @@ PopupMenuItem<MenuItem1> bulideritem1(MenuItem1 item)=>PopupMenuItem<MenuItem1>(
                                               if (items[index].type =='new') 
                                                Padding(
                                                  padding: const EdgeInsets.fromLTRB(1, 0, 30, 0),
-                                                 child: Icon(Icons.new_releases,color: Colors.white,size: 20,),
+                                                 child: Icon(Icons.new_releases,color: Colors.black,size: 20,),
                                                ),
                                                 if(items[index].type =='draft')
                                                  Padding(
                                                  padding: const EdgeInsets.fromLTRB(1, 0, 30, 0),
-                                                 child: Icon(Icons.save,color: Colors.white,size: 20,),
+                                                 child: Icon(Icons.save,color: Colors.black,size: 20,),
                                                ),
                                                 if(items[index].type =='done')
                                                   Padding(
                                                  padding: const EdgeInsets.fromLTRB(1, 0, 30, 0),
-                                                 child: Icon(Icons.check,color: Colors.white,size: 20,),
+                                                 child: Icon(Icons.check,color: Colors.black,size: 20,),
                                                ),
                                                if (items[index].type =='proc') 
                                                Padding(
                                                  padding: const EdgeInsets.fromLTRB(1, 0, 30, 0),
-                                                 child: Icon(Icons.work,color:Colors.white,size: 20,),
+                                                 child: Icon(Icons.work,color:Colors.black,size: 20,),
                                                ),
 
                                               Padding(
@@ -433,7 +449,7 @@ PopupMenuItem<MenuItem1> bulideritem1(MenuItem1 item)=>PopupMenuItem<MenuItem1>(
                                                     child: Text('${items[index].title}',
                                                         style: GoogleFonts.amiri(
                                                         fontSize: 20,
-                                                        color:Colors.white,
+                                                        color:Colors.black,
                                             
                                           // fontWeight: FontWeight.bold,
                                           letterSpacing: 1.7),
@@ -506,8 +522,9 @@ class ListItem{
   final String  title;
   final String year;
   final String type;
+  final String sem;
 
-  ListItem(this.title, this.year, this.type);
+  ListItem(this.title, this.year, this.type, this.sem);
 
 
 

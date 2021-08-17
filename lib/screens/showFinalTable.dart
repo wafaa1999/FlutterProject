@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:graduationproject/screens/Add4.dart';
 import 'package:graduationproject/screens/AddNewRoom.dart';
 import 'package:graduationproject/widgets/TimeDialog.dart';
 import 'package:graduationproject/widgets/alertDialg.dart';
@@ -28,13 +32,14 @@ final List<String> roomtype;
 final List<String> fromTime;
 final List<String> toTime;
 final List<String> days;
+final List<int> classConflict;
 
 
 
 
 
 
-  const ShowFinalTable({Key key, this.idDep, this.depName, this.instName, this.courseNumbers, this.courseNames, this.insts, this.room, this.roomtype, this.fromTime, this.toTime, this.days, this.tableName, this.year}) : super(key: key);
+  const ShowFinalTable({Key key, this.idDep, this.depName, this.instName, this.courseNumbers, this.courseNames, this.insts, this.room, this.roomtype, this.fromTime, this.toTime, this.days, this.tableName, this.year, this.classConflict}) : super(key: key);
   @override
   _ShowFinalTableState createState() => _ShowFinalTableState();
 }
@@ -51,11 +56,34 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
     //  bool isPresed = false;
      bool delete = false;
      bool flag = false;
-     var t = 0;
+     var t = -1;
+     Timer _timer;
      List<String> insts =['لم يحدد'];
      List<String> room = ['لم يحدد'];
      List<String> labsname = ['لم يحدد'];
      List<String> labsnumber = ['لم يحدد'];
+     List<Color> colors = [Color.fromRGBO(255, 204, 204, 1),
+     Color.fromRGBO(255, 178, 102, 1),
+     Color.fromRGBO(255, 255, 102, 1),
+     Color.fromRGBO(178, 255, 102, 1),
+     Color.fromRGBO(102, 255, 102, 1),
+     Color.fromRGBO(102, 255, 178, 1),
+     Color.fromRGBO(102, 255, 255, 1),
+     Color.fromRGBO(102, 178, 255, 1),
+     Color.fromRGBO(102, 102, 255, 1),
+     Color.fromRGBO(178, 102, 255, 1),
+     Color.fromRGBO(255, 102, 255, 1),
+
+
+     Color.fromRGBO(255, 102, 178, 1),
+     Color.fromRGBO(192, 192, 192, 1),
+     Color.fromRGBO(255, 0, 127, 1),
+     ];
+
+     List<int>  classConflict1 =[] ;
+     List<String> allInst = [];
+     List<String> allCourses = [];
+     
 
  
      final columns = ['رقم المساق','اسم المساق','المدرس','القاعة','الوقت'];
@@ -69,13 +97,62 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
         tables.add(TableF(widget.courseNumbers[i],widget.courseNames[i],widget.insts[i],widget.room[i],widget.roomtype[i],widget.days[i]+'\n'+widget.fromTime[i]+" - "+widget.toTime[i],
       widget.fromTime[i],widget.toTime[i],widget.days[i]  ));
         print("'yes'");
+        classConflict1.add(widget.classConflict[i]);
      }
+     EasyLoading.addStatusCallback((status) {
+      print('EasyLoading Status $status');
+      if (status == EasyLoadingStatus.dismiss) {
+        _timer?.cancel();
+      }
+    });
 
      }
+ 
+  Future getFinalDataTable(String tableName)async{
+   tables.clear();
+   classConflict1.clear();
+   t =0;
+  
+  
+
+   String apiUrl = "https://core-graduation.herokuapp.com/getFinalTable?tableName=${tableName}&idDep=${widget.idDep}";
+   print(apiUrl);
+  final response =
+        await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      Map decoded = json.decode(response.body) ; 
+      print(decoded);
+      for(int i =0; i<decoded['response'].length; i++){
+        
+
+            tables.add(TableF(decoded['response'][i]['courseNumber'],
+           decoded['response'][i]['courseName'],
+            decoded['response'][i]['instName'],
+            decoded['response'][i]['roomNumber'],
+            decoded['response'][i]['roomType'],
+            decoded['response'][i]['days']+'\n'+decoded['response'][i]['startHour']+" - "+decoded['response'][i]['endHour'],
+            decoded['response'][i]['startHour'],
+           decoded['response'][i]['endHour'],
+            decoded['response'][i]['days'] ));
+
+            classConflict1.add(decoded['response'][i]['classConflict']);
+
+      }
+   print(classConflict1);
+      
+    
+    }
+    EasyLoading.dismiss();
+   
+    return 1;
+}
+
+
+  
 
   @override
   Widget build(BuildContext context) {
-    t = 0;
+    t = -1;
     return Scaffold(
        drawer: AppDrawer(
              idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
@@ -120,9 +197,15 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
               child: PopupMenuButton<MenuItem>(
                 onSelected:(item)=>onSelected(context,item) ,
                 itemBuilder: (context)=>[
+                   ...MenuItem.itemsFive.map(bulideritem).toList(),
+                   PopupMenuDivider(),
                   ...MenuItem.itemsOne.map(bulideritem).toList(),
                   PopupMenuDivider(),
                   ...MenuItem.itemsTwo.map(bulideritem).toList(),
+                  PopupMenuDivider(),
+                  ...MenuItem.itemsThree.map(bulideritem).toList(),
+                  PopupMenuDivider(),
+                  ...MenuItem.itemsFour.map(bulideritem).toList(),
 
                 ]
               ),
@@ -134,71 +217,24 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
           
       ),
       body:
-         Column(children: [
+        
 
                
                
-           Padding(
-              padding: const EdgeInsets.fromLTRB(100, 25, 100, 25),
-              
-              
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.45,
-                decoration: BoxDecoration(
-                            gradient: new LinearGradient(
-                                colors: [ Color.fromRGBO(212, 172, 13,1,),  Color.fromRGBO(212, 172, 13,1,)]),
-                            borderRadius: BorderRadius.circular(30),
-                            boxShadow: [
-                              // BoxShadow(
-                              //     blurRadius: 4,
-                              //     color:Color.fromRGBO(64, 128, 128, 1),
-                              //     offset: Offset(1,1))
-                            ]),
-                child: ListTile(
-                
-
-                  title: Text(
-                                "أضف مساق ",
-                                style: GoogleFonts.amiri(
-                                    fontSize: 20,
-                                    color:Colors.white,
-                                      
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.7),
-                                textAlign: TextAlign.center,
-                              ),
-
-                  trailing: Icon(Icons.add,color: Colors.white,),
-                  
-                  
-
-                  
-                    onTap:(){
-                      
-                      Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute<void>(
-                                        builder: (BuildContext context) =>
-                                           AddNewRoom(
-                                             instName: widget.instName,
-                                        depName: widget.depName,
-                                          idDep:widget.idDep,
-                                          
-
-                                        ),
-                                      ),
-                                    ); 
-                      },
-                   
-                    
-                  ),
-
-                     
-
-
-               
-              ),
-            ),
+          
+         Padding(
+                padding: const EdgeInsets.all(5),
+                       
+           child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            child:
+             SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child:
+            Column(children:[
+           
               
            
                       Container(
@@ -209,7 +245,8 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
                     // height: MediaQuery.of(context).size.height * 0.07,
                     // width:MediaQuery.of(context).size.width ,
                     // color: Color.fromRGBO(206, 222, 222, 1),
-                    child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(150, 0, 10, 0),
                         child: IconButton(
               icon: Icon(Icons.done),
               iconSize: 30,
@@ -232,7 +269,8 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
 
               Container(
                 child: delete?
-                     Center(
+                     Padding(
+                       padding: const EdgeInsets.fromLTRB(150, 0, 10, 0),
                        child: IconButton(
               icon: Icon(Icons.delete_outline,color: Colors.black),
               onPressed:()async {
@@ -263,18 +301,6 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
                     
                 ),
        
-         Padding(
-                padding: const EdgeInsets.all(5),
-                       
-           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            child:
-             SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            child:
-            Column(children:[
            
               
               wafaa?
@@ -290,7 +316,6 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
            
               
 
-         ],),
        
              );
 
@@ -299,7 +324,7 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
 
   }
 
-  void onSelected(BuildContext context,MenuItem item){
+  void onSelected(BuildContext context,MenuItem item)async{
     switch(item){
       case MenuItem.itemEdit:
       setState(() {
@@ -315,7 +340,53 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
       });
       break;
 
+      case MenuItem.itemAproved:
+      setApproval();
+      pushNoti();
+        Dialog alert = showAlert(context,'تم اعتماد الجدول الدراسي للعام الحالي',0);
+                          showDialog(
+                            context: context,
+                           child:alert,
+                           barrierDismissible: false, );
+      break;
+      
+      case MenuItem.itemChecked:
+      int n = await checkConflict();
+      if (n ==1){
+      int m = await getFinalDataTable(widget.tableName);
+      if (m ==1){
+        print("done");
+        setState(() {
+          wafaa = !wafaa;
+        });
+      }
+      }
+      
+      
+      break;
+
+      case MenuItem.itemaAdd:
+       Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (BuildContext context) =>
+                                           AddTablefinal(
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+                                        idDep:widget.idDep,
+                                        year:widget.year,
+                                        tablename: widget.tableName,
+                                        
+
+                                          
+
+                                        ),
+                                      ),
+                                    ); 
+                                    break;
     }
+
+    
 
   
   }
@@ -380,7 +451,13 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
           
            color: MaterialStateColor.resolveWith((states) {
              t += 1;
-             return t % 2 == 0 ? Colors.white : Colors.grey[200]; //make tha magic!
+            
+            if( t ==classConflict1.length) t =0;
+            // String y =t as String;
+            print("t = $t");
+            print("**");
+            //  return t % 2 == 0 ? Colors.white : Colors.grey[200];
+             return  classConflict1[t] == -1?Colors.white:colors[classConflict1[t]]; //make tha magic! //make tha magic!
               }),
 
 
@@ -418,7 +495,9 @@ class _ShowFinalTableState extends State<ShowFinalTable> {
                   child: Center(
                     child: Text('$cell',style: GoogleFonts.amiri(
                                         fontSize: 15,
-                                        color:Color.fromRGBO(64, 128, 128, 1),
+                                        color:
+                                        // Colors.black,
+                                        classConflict1[t] != -1?Colors.white:Color.fromRGBO(64, 128, 128, 1),
                                           
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 1.7),
@@ -718,6 +797,7 @@ Future getInst()async{
 
      for(int i =0; i<decoded['response'].length; i++){
        insts.add(decoded['response'][i]['name']); 
+       allInst.add(decoded['response'][i]['name']); 
       
        }
     }
@@ -748,6 +828,72 @@ Future getRooms()async{
        }
     }
     print(insts);
+    return 1;
+}
+
+
+Future setApproval()async{
+
+ String apiUrl2 = "https://core-graduation.herokuapp.com/setApprovalTable?idDep=${widget.idDep}&tableName=${widget.tableName}";
+
+ final response1 =
+        await http.get(Uri.parse(apiUrl2));
+        
+    if (response1.statusCode == 200) {
+  
+        Map decoded = json.decode(response1.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     
+    }
+    print(insts);
+    return 1;
+}
+
+Future checkConflict()async{
+       EasyLoading.show(status: '');
+
+
+ String apiUrl2 = "https://core-graduation.herokuapp.com/checkConflict?idDep=${widget.idDep}&tableName=${widget.tableName}";
+
+ final response1 =
+        await http.get(Uri.parse(apiUrl2));
+        
+    if (response1.statusCode == 200) {
+  
+        Map decoded = json.decode(response1.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+              
+
+
+     
+    }
+    return 1;
+}
+
+
+
+
+
+Future pushNoti()async{
+       String note = "الجدول الدراسي الخاص بدك لهذا الفصل جاهز وموجود في خانة جدولي";
+
+
+ String apiUrl2 = "https://core-graduation.herokuapp.com/addNotification?idDep=${widget.idDep}&note=$note&flag=1&time=0&hour=0";
+
+ final response1 =
+        await http.get(Uri.parse(apiUrl2));
+        
+    if (response1.statusCode == 200) {
+      print('push');
+  
+        Map decoded = json.decode(response1.body) as Map<String, dynamic>;; 
+        // print(decoded['response'].length);
+              
+
+
+     
+    }
     return 1;
 }
 
@@ -808,28 +954,6 @@ class TableF{
 
 
 
-  //     Room copy2(
-  //   String camp,
- 
-  // ) =>
-  //     Room(
-  //       this.number,
-  //       this.type,
-  //       camp,
-  //       this.name
-  //     );
-
-  //      Room copy3(
-  //   String name,
- 
-  // ) =>
-  //     Room(
-  //       this.number,
-  //       this.type,
-  //       this.camp,
-  //        name
-  //     );
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -867,6 +991,16 @@ class MenuItem{
   static  List<MenuItem> itemsTwo = [
     itemDelete
   ];
+   static  List<MenuItem> itemsThree = [
+    itemAproved
+  ];
+
+  static  List<MenuItem> itemsFour = [
+    itemChecked
+  ];
+   static  List<MenuItem> itemsFive = [
+    itemaAdd
+  ];
 
   const MenuItem(this.text, this.icon);
 
@@ -874,6 +1008,18 @@ class MenuItem{
   Icons.edit);
     static const MenuItem itemDelete = MenuItem('حذف',
     Icons.delete_outline);
+
+     static const MenuItem itemAproved = MenuItem('اعتماد',
+    Icons.approval
+    );
+
+
+ static const MenuItem itemChecked = MenuItem('فحص التعارض',
+    Icons.check_circle);
+    static const MenuItem itemaAdd = MenuItem('اضافة مساق',
+    Icons.add);
+
+
 
   
 }

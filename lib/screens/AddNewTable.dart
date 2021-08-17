@@ -32,6 +32,7 @@ class _AddNewTableState extends State<AddNewTable> {
       List<String> tablenames = [];
      List<String> status = [];
      List<String> years=[];
+     List<String> sem= [];
 List <String> values=[
   '2016/2017','2017/2018',
   '2018/2019','2019/2020',
@@ -95,6 +96,7 @@ List <String> values=[
        tablenames.add(decoded['response'][i]['name']);  
        status.add(decoded['response'][i]['status']);
        years.add(decoded['response'][i]['year']);
+       sem.add(decoded['response'][i]['semester']);
 
       
        }
@@ -185,7 +187,8 @@ List <String> values=[
                                         depName: widget.depName,
                                         tablenames:tablenames,
                                         status:status,
-                                        year:years 
+                                        year:years ,
+                                       semster: sem,
                                       ),
                                     ),
                                   ); 

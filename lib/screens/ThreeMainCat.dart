@@ -22,8 +22,9 @@ final String tableName;
 final String depName;
 final String instName;
 final String year;
+final String sem;
 
-  const Showcat({Key key, this.idDep, this.tableName, this.depName, this.instName, this.year}) : super(key: key);
+  const Showcat({Key key, this.idDep, this.tableName, this.depName, this.instName, this.year, this.sem}) : super(key: key);
 
   @override
   _ShowcatState createState() => _ShowcatState();
@@ -35,6 +36,7 @@ class _ShowcatState extends State<Showcat> {
     super.initState();
     getdep();
   }
+  String ip ="http://192.168.1.7:3000/runCore";
   String tableName;
   bool show = false;
   int _value = 0;
@@ -53,6 +55,7 @@ class _ShowcatState extends State<Showcat> {
   List<String> status = [];
   List<String> notes = [];
     List<String> tableNames = [];
+    List<String> sems = [];
 
 
   Future getdep() async {
@@ -293,6 +296,7 @@ class _ShowcatState extends State<Showcat> {
        tableNames.add(decoded['response'][i]['name']);  
        status.add(decoded['response'][i]['status']);
        years.add(decoded['response'][i]['year']);
+       sems.add(decoded['response'][i]['semester']);
 
       
        }
@@ -305,7 +309,42 @@ class _ShowcatState extends State<Showcat> {
     
 
       }
-    
+  
+  Future runCore() async {
+    String flag="";
+    if(_value == 1){
+      flag = 'false';
+    }
+    else 
+    flag = 'true';
+
+
+    String apiUrl =ip+"?idDep=${widget.idDep}&tableName=${widget.tableName}&date=${widget.year}&semester=${widget.sem}&softFlag=$flag";
+    final response =
+        await http.get(Uri.parse(apiUrl));
+        
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+
+     for(int i =0; i<decoded['response'].length; i++){
+       depsId.add(decoded['response'][i]['idDepartment']); 
+       depNames.add(decoded['response'][i]['name']); 
+       
+
+      
+}
+   print(depsId);
+   print(depNames);
+  
+        
+       
+    }
+    return 1;
+
+   }
+  
     
   @override
   Widget build(BuildContext context) {
@@ -343,7 +382,8 @@ class _ShowcatState extends State<Showcat> {
                                         depName: widget.depName,
                                         tablenames:tableNames,
                                         status:status,
-                                        year:years 
+                                        year:years ,
+                                        semster: sems,
                                       ),
                                     ),
                                   ); 
@@ -389,7 +429,7 @@ class _ShowcatState extends State<Showcat> {
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height:MediaQuery.of(context).size.height * 0.1 ,
+                  height:MediaQuery.of(context).size.height * 0.06 ,
                 ),
                 InkWell(
                   onTap: (){
@@ -427,11 +467,11 @@ class _ShowcatState extends State<Showcat> {
                         },
                                               child: Container(
                           decoration: BoxDecoration(
-                                 border: Border.all(color: Color.fromRGBO(212, 172, 13,1,),width: 3),
+                                 border: Border.all(color: Colors.grey[400],width: 3),
                                   gradient: new LinearGradient(
                                       colors: [Colors.white,
                                      Colors.white] ),
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(40),
                                   boxShadow: [
                                     BoxShadow(
                                         blurRadius: 4,
@@ -440,8 +480,8 @@ class _ShowcatState extends State<Showcat> {
                                   ],
                                   ),
                           
-                        height:MediaQuery.of(context).size.height * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.7,
+                        height:MediaQuery.of(context).size.height * 0.08,
+                        width: MediaQuery.of(context).size.width * 0.65,
                         child:Center(child: OnHoverText(
                                                   child: Text("مواد من القسم ", style: GoogleFonts.amiri(
                                     fontSize: 20,
@@ -454,7 +494,7 @@ class _ShowcatState extends State<Showcat> {
                     ),
                 ),
                 // ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
               
                Center(
                   // child: Padding(
@@ -503,7 +543,7 @@ class _ShowcatState extends State<Showcat> {
                                 gradient: new LinearGradient(
                                     colors: [Colors.white,
                                    Colors.white] ),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(40),
                                 boxShadow: [
                                   BoxShadow(
                                       blurRadius: 4,
@@ -512,8 +552,8 @@ class _ShowcatState extends State<Showcat> {
                                 ],
                                 ),
                         
-                      height:MediaQuery.of(context).size.height * 0.1,
-                      width: MediaQuery.of(context).size.width * 0.6,
+                      height:MediaQuery.of(context).size.height * 0.08,
+                        width: MediaQuery.of(context).size.width * 0.65,
                       child:Center(child: Text("مواد من قسم أخر ", style: GoogleFonts.amiri(
                                 fontSize: 20,
                                 color: Colors.black,
@@ -523,7 +563,7 @@ class _ShowcatState extends State<Showcat> {
                     ),
                   ),
                 // ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
 
                Center(
                   // child: Padding(
@@ -572,11 +612,11 @@ class _ShowcatState extends State<Showcat> {
                       },
                                           child: Container(
                         decoration: BoxDecoration(
-                               border: Border.all(color: Color.fromRGBO(212, 172, 13,1,),width: 3),
+                               border: Border.all(color: Colors.grey[400],width: 3),
                                 gradient: new LinearGradient(
                                     colors: [Colors.white,
                                    Colors.white] ),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(40),
                                 boxShadow: [
                                   BoxShadow(
                                       blurRadius: 4,
@@ -585,8 +625,8 @@ class _ShowcatState extends State<Showcat> {
                                 ],
                                 ),
                         
-                      height:MediaQuery.of(context).size.height * 0.1,
-                      width: MediaQuery.of(context).size.width * 0.5,
+                        height:MediaQuery.of(context).size.height * 0.08,
+                        width: MediaQuery.of(context).size.width * 0.65,
                       child:Center(child: Text("مواد لقسم أخر  ", style: GoogleFonts.amiri(
                                 fontSize: 20,
                                 color: Colors.black,
@@ -596,7 +636,7 @@ class _ShowcatState extends State<Showcat> {
                     ),
                   ),
                 // ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.08,),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
               Center(
                   // child: Padding(
                     // padding: const EdgeInsets.all(10),
@@ -636,11 +676,11 @@ class _ShowcatState extends State<Showcat> {
                       },
                                           child: Container(
                         decoration: BoxDecoration(
-                               border: Border.all(color: Color.fromRGBO(212, 172, 13,1,),width: 3),
+                               border: Border.all(color: Colors.grey[400],width: 3),
                                 gradient: new LinearGradient(
                                     colors: [Colors.white,
                                    Colors.white] ),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(40),
                                 boxShadow: [
                                   BoxShadow(
                                       blurRadius: 4,
@@ -649,8 +689,8 @@ class _ShowcatState extends State<Showcat> {
                                 ],
                                 ),
                         
-                      height:MediaQuery.of(context).size.height * 0.1,
-                      width: MediaQuery.of(context).size.width * 0.5,
+                      height:MediaQuery.of(context).size.height * 0.08,
+                        width: MediaQuery.of(context).size.width * 0.65,
                       child:Center(child: Text("مواعيد المدرسين", style: GoogleFonts.amiri(
                                 fontSize: 20,
                                 color: Colors.black,
@@ -660,6 +700,7 @@ class _ShowcatState extends State<Showcat> {
                     ),
                   ),
                 // ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.06,),
               Center(
                       child: InkWell(
                                               child: Container(
@@ -674,8 +715,8 @@ class _ShowcatState extends State<Showcat> {
                           decoration: BoxDecoration(
                             //  border: Border.all(color: Colors.white,width: 2),
                               gradient: new LinearGradient(
-                                  colors: [Colors.grey[400],
-                                 Colors.grey] ),
+                                  colors: [Color.fromRGBO(212, 172, 13,1,),
+                                 Color.fromRGBO(212, 172, 13,1,)] ),
                               borderRadius: BorderRadius.circular(40),
                               boxShadow: [
                                 BoxShadow(
@@ -776,14 +817,19 @@ class _ShowcatState extends State<Showcat> {
                   decoration: BoxDecoration(
                           gradient: new LinearGradient(
                               colors: [Color.fromRGBO(206, 222, 222, 1), Color.fromRGBO(206, 222, 222, 1)]),
-                          borderRadius: BorderRadius.circular(0),
+                          borderRadius: BorderRadius.circular(40),
                         ),
                         
                           
                           child: IconButton(icon: Icon(Icons.done_all),color: Color.fromRGBO(64, 128, 128, 1),
                           alignment: Alignment.center, 
                           onPressed:(){
-                           print(_value);
+                           runCore();
+                             Dialog alert = showAlert(context,'تم البدء! سيصلك تنبيه عند الانتهاءمنه ',0);
+                          showDialog(
+                            context: context,
+                           child:alert,
+                           barrierDismissible: false, );
                            start = true;
                            setState(() {
                              show = !show;

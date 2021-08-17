@@ -30,6 +30,14 @@ dependencies:
   flutter_svg: 
   google_fonts:
   flutter_easyloading:
+  cloud_firestore: ^0.13.7
+  firebase_auth: ^0.16.1
+  flutter_local_notifications: ^0.6.0
+  
+
+
+
+
   
 
 
@@ -58,10 +66,19 @@ flutter:
     - assets/images/room.svg
     - assets/images/books.svg
     - assets/images/teacher.svg
+    - assets/images/ma.svg
+    - assets/images/fe.svg
     - assets/images/timetable.svg
     - assets/images/back.png
     - assets/images/backlogin.png
     - assets/images/logo.png
+    - assets/images/1.jpg
+    - assets/images/2.jpg
+    - assets/images/not.jfif
+    - assets/images/app.jpg
+    - assets/images/doc.svg
+    
+
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

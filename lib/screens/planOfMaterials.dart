@@ -20,7 +20,7 @@ class PlanOfMaterials extends StatefulWidget {
 
 class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
-  String idIstructor = "60ddd594f7368d0aaf470b60" ;
+  // String idIstructor = "60ddd594f7368d0aaf470b60" ;
    Map decoded;
    bool clicked = false;
    bool clicked2 = false;
@@ -33,16 +33,19 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
   bool clicked9 = false;
    bool clicked10 = false;
   bool clicked11 = false;
+  bool clicked12 = false;
    
    int selected;
    List names=[];
    List numbers=[];
+   List<Material> mati =[];
 
 
   @override
   void initState() { 
     super.initState();
     print(widget.idDep);
+    getdata();
     //  getMat(idIstructor);
     
   }
@@ -52,11 +55,11 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
        drawer: AppDrawer(
              idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
              ),
-      
+       
       appBar:AppBar(
             // backgroundColor: Color(0xFFF5CEB8),
             title: Text(
-                              "الخطة الدراسية",
+                              "المواد الدراسية",
                               style: GoogleFonts.amiri(
                                   fontSize: 20,
                                   color:Colors.white,
@@ -129,6 +132,9 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
                                         idDep:widget.idDep,
                                         instName: widget.instName,
                                         depName: widget.depName,
+                                        idInst:widget.idInst
+                                           
+ 
                                       ),
                                     ),
                                   ); 
@@ -179,14 +185,17 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
                 children:[
 
                 InkWell(
-                  onTap:()async{
-                    await getMat(widget.idInst,1,1);
-
+                  onTap:(){
+                    int i = getMat('1','1');
+                    if (i ==1){
+                      print(names);
+                      print(numbers);
                    setState(() {
                      clicked = !clicked;
                      clicked2 = false;
                      
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -226,12 +235,16 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
                       InkWell(
                   onTap:()async{
-                    await getMat(widget.idInst,1,2);
+                    int i = getMat('1','2');
+                    if (i ==1){
+                      print(names);
+                      print(numbers);
 
                    setState(() {
                      clicked2 = !clicked2;
                      clicked = false;
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -471,13 +484,17 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
                 InkWell(
                   onTap:()async{
-                    await getMat(widget.idInst,2,1);
+                    int i = getMat('2','1');
+                    if (i ==1){
+                      print(names);
+                      print(numbers);
 
                    setState(() {
                      clicked3 = !clicked3;
                      clicked4 = false;
                      
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -517,12 +534,16 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
                       InkWell(
                   onTap:()async{
-                    await getMat(widget.idInst,2,2);
+                    int i = getMat('2','2');
+                    if (i ==1){
+                      print(names);
+                      print(numbers);
 
                    setState(() {
                      clicked4 = !clicked4;
                      clicked3 = false;
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -761,13 +782,17 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
                 InkWell(
                   onTap:()async{
-                    await getMat(widget.idInst,3,1);
+                   int i = getMat('3','1');
+                    if (i ==1){
+                      print(names);
+                      print(numbers);
 
                    setState(() {
                      clicked5 = !clicked5;
                      clicked6 = false;
                      
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -807,12 +832,16 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
                       InkWell(
                   onTap:()async{
-                    await getMat(widget.idInst,3,2);
+                   int i = getMat('3','2');
+                    if (i ==1){
+                      print(names);
+                      print(numbers);;
 
                    setState(() {
                      clicked6 = !clicked6;
                      clicked5 = false;
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -1051,13 +1080,17 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
                 InkWell(
                   onTap:()async{
-                    await getMat(widget.idInst,4,1);
+                    int i = getMat('4','1');
+                    if (i ==1){
+                      print(names);
+                      print(numbers);
 
                    setState(() {
                      clicked7 = !clicked7;
                      clicked8 = false;
                      
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -1097,12 +1130,16 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
                       InkWell(
                   onTap:()async{
-                    await getMat(widget.idInst,4,2);
+                    int i = getMat('4','2');
+                    if (i ==1){
+                      print(names);
+                      print(numbers);
 
                    setState(() {
                      clicked8 = !clicked8;
                      clicked7 = false;
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -1340,13 +1377,17 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
                 InkWell(
                   onTap:()async{
-                    await getMat(widget.idInst,5,1);
+                    int i = getMat('5','1');
+                    if (i ==1){
+                      print(names);
+                      print(numbers);
 
                    setState(() {
                      clicked9 = !clicked9;
                      clicked10 = false;
                      
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -1386,12 +1427,16 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
                       InkWell(
                   onTap:()async{
-                    await getMat(widget.idInst,5,2);
+                    int i = getMat('5','2');
+                    if (i ==1){
+                      print(names);
+                      print(numbers);
 
                    setState(() {
                      clicked10 = !clicked10;
                      clicked9 = false;
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -1631,13 +1676,17 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
 
                 InkWell(
                   onTap:()async{
-                    await getMat(widget.idInst,-1,-1);
+                    int i = getMat('-1','-1');
+                    if (i ==1){
+                      // print(names);
+                      // print(numbers);
 
                    setState(() {
                      clicked11 = !clicked11;
                      
                      
                    });
+                    }
                     },
                      child:Container(
                        decoration: BoxDecoration(
@@ -1765,6 +1814,180 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
                            )
                           :SizedBox(height:1)
 
+                  //
+              ,  Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            
+            child: Container(
+              decoration: BoxDecoration(
+                          gradient: new LinearGradient(
+                              colors: [Color.fromRGBO(79, 84, 103, 1), Color.fromRGBO(64, 128, 128, 1)]),
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 4,
+                                color:Color.fromRGBO(64, 128, 128, 1),
+                                offset: Offset(1,1))
+                          ]),
+              child: ExpansionTile(
+              
+
+                title: Text(
+                              "مساقات لأقسام أخرى",
+                              style: GoogleFonts.amiri(
+                                  fontSize: 20,
+                                  color:Colors.white,
+                                    
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.7),
+                              textAlign: TextAlign.center,
+                            ),
+
+                trailing: Icon(clicked11?Icons.arrow_drop_up:Icons.arrow_drop_down
+                ,color: clicked11?Colors.white:Colors.white,),
+                
+                children:[
+
+                InkWell(
+                  onTap:()async{
+                    int i = getMat2();
+                    if (i ==1){
+                      // print(names);
+                      // print(numbers);
+
+                   setState(() {
+                     clicked12 = !clicked12;
+                     
+                     
+                   });
+                    }
+                    },
+                     child:Container(
+                       decoration: BoxDecoration(
+                          gradient: new LinearGradient(
+                              colors:clicked11?[Colors.grey[200], Colors.grey[200]] :
+                              [Color.fromRGBO(79, 84, 103, 1), Color.fromRGBO(64, 128, 128, 1)]),
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 4,
+                                color:Color.fromRGBO(64, 128, 128, 1),
+                                offset: Offset(1,1))
+                          ]),
+                       
+
+                       child: ListTile(
+                        
+                    title: Text(
+                                "-الفصل الأول و الثاني-",
+                                style: GoogleFonts.amiri(
+                                    fontSize: 16,
+                                    color:clicked11?Colors.black:Colors.white,
+                                      
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.7),
+                                textAlign: TextAlign.center,
+                              ),
+                              
+                           trailing: Icon(Icons.arrow_drop_down,color: Color.fromRGBO(79, 84, 103, 1),),
+
+                    
+                    
+
+                  ),
+                     ),
+                ),
+
+                
+                   
+
+
+                ]
+                
+              ),
+            ),
+          ),
+
+          clicked12 == true?
+            Column(children: [
+               for(int i =0; i<numbers.length ;i++)
+                        Center(
+                          child: ListTile(
+                            
+                      title: Row(
+                          
+                          children: [
+                           
+                          Padding(
+                            padding: const EdgeInsets.all(1),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.45,
+                              height: MediaQuery.of(context).size.height * 0.06,
+                              
+                              decoration: BoxDecoration(
+                                
+                              gradient: new LinearGradient(
+                                  colors: i%2==1?[Colors.white, Colors.white]:
+                                  [Colors.grey[200], Colors.grey[200]]),
+                                  
+                              borderRadius: BorderRadius.circular(5),
+                               boxShadow: [
+                            BoxShadow(
+                                blurRadius: 4,
+                                color:i%2==1?Colors.white:Colors.grey[200],
+                                offset: Offset(1, 1))
+                          ]
+                            ),
+                              
+                              child: Center(
+                                child: Text(
+                              "${numbers[i]}",
+                              style: GoogleFonts.amiri(
+                                  fontSize: 16,
+                                  color:i==0?Color.fromRGBO(64, 128, 128, 1):Colors.black,
+                                    
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.7),
+                              textAlign: TextAlign.center,
+                            ),)),
+                          ),
+
+                      Padding(
+                            padding: const EdgeInsets.all(1),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.45,
+                              height: MediaQuery.of(context).size.height * 0.06,
+                              
+                              decoration: BoxDecoration(
+                              gradient: new LinearGradient(
+                                  colors: i%2==1?[Colors.white, Colors.white]:
+                                  [Colors.grey[200], Colors.grey[200]]),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                              
+                              child: Center(
+                                child: Text(
+                              "${names[i]}",
+                              style: GoogleFonts.amiri(
+                                  fontSize: 16,
+                                  color:i==0?Color.fromRGBO(64, 128, 128, 1):Colors.black,
+                                    
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.7),
+                              textAlign: TextAlign.center,
+                            ),)),
+                          ),
+                      ],),
+                   
+                      
+               
+                              
+                            ),
+                        ), 
+                           ],
+                           )
+                          :SizedBox(height:1)
+
 
 
 
@@ -1791,25 +2014,23 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
     
       }
 
-     
 
-  Future getMat(String idIstructor,year,sem) async {
-    idIstructor =widget.idDep;
-    names.clear();
-    numbers.clear();
-    names.add("رقم المساق");
-    numbers.add("اسم المساق");
-    final String apiUrl = "https://core-graduation.herokuapp.com/getMaterialsOfDepartment?idIstructor=$idIstructor&year=$year&sem=$sem";
+     Future getdata() async {
+  
+    final String apiUrl = "https://core-graduation.herokuapp.com/getAllMaterialsOfDepartment?idDep=${widget.idDep}";
     final response =
         await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
         decoded = json.decode(response.body) as Map<String, dynamic>; 
 
      for(int i =0; i<decoded['response'].length; i++){
-       names.add(decoded['response'][i]['name']);  
-       numbers.add(decoded['response'][i]['number']);
-
+       
+         mati.add(Material(decoded['response'][i]['name'],decoded['response'][i]['number'],decoded['response'][i]['year']
+         ,decoded['response'][i]['semester'],decoded['response'][i]['flagTo']));
+     
+       
        }
+       print("mat Done");
     
 
     
@@ -1821,15 +2042,72 @@ class _PlanOfMaterialsState extends State<PlanOfMaterials> {
     
     }
 
- 
 
+  int getMat(year,sem)  {
+    // idIstructor =widget.idDep;
+    names.clear();
+    numbers.clear();
+    names.add("رقم المساق");
+    numbers.add("اسم المساق");
 
+    for(int i =0;i< mati.length;i++){
+      // print(" year =${mati[i].year}");
+      // print(" semester =${mati[i].semester}");
+      if (decoded['response'][i]['flagTo'] =='false'){
+      if (mati[i].year == year && mati[i].semester == sem){
 
-
+        names.add(mati[i].name);
+        numbers.add(mati[i].number);
+      }
     }
-
    
+  
+      
+     
+  }
+return 1;
+  
+
+}
+
+
+ int getMat2()  {
+    // idIstructor =widget.idDep;
+    names.clear();
+    numbers.clear();
+    names.add("رقم المساق");
+    numbers.add("اسم المساق");
+
+    for(int i =0;i< mati.length;i++){
+      if (decoded['response'][i]['flagTo'] =='true'){
+      
+
+        names.add(mati[i].name);
+        numbers.add(mati[i].number);
+     }
+   
+  
+     
+     
+  }
+   return 1;
+
+  
+
+}
+
+
+}
 
      
- 
+ class Material {
+  final String name;
+  final String number;
+  final String year;
+  final String semester;
+  final String flag;
+
+  Material(this.name, this.number, this.year, this.semester, this.flag);
+
+ }
 

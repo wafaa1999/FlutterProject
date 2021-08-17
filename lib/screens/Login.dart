@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graduationproject/screens/HeadOfDepMain.dart';
+import 'package:graduationproject/teacher/DoctorMain.dart';
 import 'package:graduationproject/widgets/alertDialg.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -301,10 +302,21 @@ class _Login extends State<Login> {
                      }
 
                       else if (responce == 3){ // دكتور  
-                      //  Navigator.pushReplacementNamed(context, '/HeadOfDepMain',
-                      //   arguments: {
-                      //     'idInstrctor': state,
-                      //     'type':type}); 
+                      // DoctorMain
+                      Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (BuildContext context) =>
+                                           DoctorMain(
+                                             idDep:idDep,
+                                        instName :instName,
+                                        depName :depName,
+                                          
+
+                                        ),
+                                      ),
+                                    );
+                       
                      }
                            
                           

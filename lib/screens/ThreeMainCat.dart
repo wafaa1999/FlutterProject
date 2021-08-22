@@ -36,7 +36,7 @@ class _ShowcatState extends State<Showcat> {
     super.initState();
     getdep();
   }
-  String ip ="http://192.168.1.7:3000/runCore";
+  String ip ="http://192.168.1.7:3000/";
   String tableName;
   bool show = false;
   int _value = 0;
@@ -56,6 +56,7 @@ class _ShowcatState extends State<Showcat> {
   List<String> notes = [];
     List<String> tableNames = [];
     List<String> sems = [];
+    bool back= false;
 
 
   Future getdep() async {
@@ -319,7 +320,7 @@ class _ShowcatState extends State<Showcat> {
     flag = 'true';
 
 
-    String apiUrl =ip+"?idDep=${widget.idDep}&tableName=${widget.tableName}&date=${widget.year}&semester=${widget.sem}&softFlag=$flag";
+    String apiUrl =ip+"runCore?idDep=${widget.idDep}&tableName=${widget.tableName}&date=${widget.year}&semester=${widget.sem}&softFlag=$flag";
     final response =
         await http.get(Uri.parse(apiUrl));
         
@@ -730,8 +731,16 @@ class _ShowcatState extends State<Showcat> {
                               
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(start?
+                            child: back == false?Text(start?
                               "ايقاف":"انشاء جدول",
+                              style: GoogleFonts.amiri(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.7),
+                              textAlign: TextAlign.center,
+                            ):
+                            Text('رجوع',
                               style: GoogleFonts.amiri(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -742,14 +751,45 @@ class _ShowcatState extends State<Showcat> {
                           ),
                         
                         ),
-                      onTap: (){
+                      onTap: ()async{
+                        if (back == true){
+                          Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                         AllTableshow(
+                                        idDep:widget.idDep,
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+                                        tablenames:tableNames,
+                                        status:status,
+                                        year:years ,
+                                        semster: sems,
+                                      ),
+                                    ),
+                                  ); 
+                          
+                        }
                         if(start == false){
                         setState(() {
                           show = !show;
                         });
                         }
                          if(start == true && show == false){
-                           print("ايقاف");
+
+                             int res = await stopCore();
+                              Dialog alert = showAlert(context,'يرجى الانتظار بضع دقائق سيتم ارسال اشعار عند الانتهاء',0);
+                          showDialog(
+                            context: context,
+                           child:alert,
+                           barrierDismissible: false, );
+                           start = true;
+
+                            setState(() {
+                            back = true;
+                            });
+
+                          
                          }
                           
 
@@ -863,5 +903,27 @@ class _ShowcatState extends State<Showcat> {
 
 
 
+  }
+
+  Future stopCore() async {
+   
+
+
+    String apiUrl =ip+"storCore?tableName=${widget.tableName}";
+    final response =
+        await http.get(Uri.parse(apiUrl));
+        
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;
+        print(decoded['response'].length);
+
+       
+
+       }
+
+    return 1;
+
+  
   }
 }

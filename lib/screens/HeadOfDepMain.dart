@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +9,7 @@ import 'package:graduationproject/screens/planOfMaterials.dart';
 import 'package:graduationproject/screens/showIns.dart';
 import 'package:graduationproject/screens/showRooms.dart';
 import 'package:graduationproject/screens/showtables.dart';
+import 'package:graduationproject/screens/times.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:graduationproject/widgets/Gridwidget.dart';
 // import 'package:graduationproject/widgets/headOfInsHome.dart';
@@ -51,6 +54,18 @@ class _HeadOfDepMainState extends State<HeadOfDepMain> {
      bool wafaa = false ;
        final notifications = FlutterLocalNotificationsPlugin();
        List<String> semester=[];
+         List<String> start=[];
+   List<String> end=[];
+   List<String> breakFlag=[]; // في بريك  بفصل ع الباك سلاش
+   List<String> breakTimeStart=[];
+    List<String> breakTimeEnd=[];
+   List<String> duration=[];
+   List<String> groupC=[];
+   List<String>flahAllDay=[];
+   List<String> startL=[];
+   List<String> endL=[];
+   List<String>flahAllDayL=[];
+   Timer timer;
 
  
  
@@ -58,17 +73,18 @@ class _HeadOfDepMainState extends State<HeadOfDepMain> {
   @override
   void initState() { 
     super.initState();
+    getNotification();
      final settingsAndroid = AndroidInitializationSettings('app_icon');
     final settingsIOS = IOSInitializationSettings(
         onDidReceiveLocalNotification: (id, title, body, payload) =>
-            onSelectNotification(payload));
+            onSelectNotification(body));
 
     notifications.initialize(
         InitializationSettings(settingsAndroid, settingsIOS),
         onSelectNotification: onSelectNotification);
-        getNotification();
+        
 
-
+ timer = Timer.periodic(Duration(seconds: 150), (Timer t) =>getNotification());
     getUser();
     
   
@@ -81,7 +97,88 @@ class _HeadOfDepMainState extends State<HeadOfDepMain> {
 
     
   }
-    Future onSelectNotification(String payload){}
+
+  @override
+void dispose() {
+  timer?.cancel();
+  super.dispose();
+}
+    Future onSelectNotification(String contant)async{
+      print(" contant is $contant");
+      int index1 = 0;
+      for(int i =0; i <noti.length;i++){
+        if (noti[i].note == contant){
+          index1 =i;
+          break;
+        }
+      }
+      print(noti[index1].from);
+       if(noti[index1].from == 'head'){   
+         int responce = await getTimes(noti[index1].hour);
+                           if(responce == 1){
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                         TimesOfSemester(
+                                        idDep:widget.idDep,
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+
+                                        start: start,
+                                        end: end,
+                                        breakFlag:breakFlag ,
+                                        breakTimeStart:breakTimeStart,
+                                        breakTimeEnd: breakTimeEnd,
+                                        duration: duration,
+                                        flahAllDay:flahAllDay,
+                                        groupC:groupC,
+                                        startL: startL,
+                                        endL: endL,
+                                        flahAllDayL:flahAllDayL
+
+                                      ),
+                                    ),
+                                  );
+                           }
+
+                         
+
+
+         }
+          //  if(noti[index1].from == 'sch'){ 
+          //                    tablenames.clear();
+          //                  status.clear();
+          //                  year.clear();
+          //                    int responce = await getalltables();
+                             
+          //                  if(responce == 1){
+          //                   //  getNotification();
+                           
+
+          //                   Navigator.push(
+          //                           context,
+          //                           MaterialPageRoute<void>(
+          //                             builder: (BuildContext context) =>
+          //                                AllTableshow(
+          //                               idDep:widget.idDep,
+          //                               instName: widget.instName,
+          //                               depName: widget.depName,
+          //                               tablenames:tablenames,
+          //                               status:status,
+          //                               year:year ,
+          //                               semster:semester
+          //                             ),
+          //                           ),
+          //                         ); 
+ 
+          //                  }
+          //                  }
+                           
+        
+
+
+    }
  
   // updateNoti
   Future updateNoti(String note) async {
@@ -91,7 +188,6 @@ class _HeadOfDepMainState extends State<HeadOfDepMain> {
     print(apiUrl);
     
 
-https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaaabf83&instName=علاء الدين المصري&note= الاول يرجى البدء باعداد الجدول الدراسي للفصل الدراسي بالاطلاع على المواعيد الدراسية للفصل
     final response =
         await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
@@ -116,6 +212,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
  
 
   Future getNotification() async {
+    print("notification");
   List<NotificationMessage> noti1 = [];
   noti.clear();
   noti1.clear();
@@ -129,7 +226,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
 
      for(int i =0; i<decoded['response'].length; i++){
       //  if (decoded['response'][i]['idDep'] == widget.idDep && decoded['response'][i]['type'] != 'head of department')
-       noti1.add(NotificationMessage(decoded['response'][i]['note'],decoded['response'][i]['flag'],decoded['response'][i]['from'],decoded['response'][i]['hour']));  
+       noti1.add(NotificationMessage(decoded['response'][i]['note'],decoded['response'][i]['flag'],decoded['response'][i]['from'],decoded['response'][i]['date'],i));  
            if (decoded['response'][i]['flag'] == 'true'){
              showSilentNotification(notifications,
                   title: 'تنبيه', body: decoded['response'][i]['note'], id: i);
@@ -147,10 +244,10 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
       
 
       print(wafaa);
-      // int k =0;
+      int k =0;
       for (int j = (noti1.length) -1 ; j>= 0 ;j--){
         noti.add(noti1[j]);
-        // k++;
+        k++;
       }
       print(noti);
       
@@ -304,6 +401,87 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
       }
     
             // bool wafaa = true;
+    Future getTimes(String date) async {
+      
+    
+   start.clear();
+   end.clear();
+   breakFlag.clear();
+   breakTimeStart.clear();
+   breakTimeEnd.clear();
+   duration.clear();
+   groupC.clear();
+   flahAllDay.clear();
+   startL.clear();
+   endL.clear();
+   flahAllDayL.clear();
+ 
+
+
+
+    print(widget.idDep);
+    final String apiUrl = "https://core-graduation.herokuapp.com/getTimesForHeadOfDep?date=$date";
+    final response =
+        await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+        List<String> courseTime = decoded['response'][0]['courseTimes'].split('*');
+        
+        for(int i =0 ;i< courseTime.length ; i++){
+          List<String> course = courseTime[i].split(',');
+          start.add(course[0].split('/')[0]);
+          end.add(course[0].split('/')[1]);
+          breakFlag.add(course[1]);
+          breakTimeStart.add(course[2].split('/')[0]);
+          breakTimeEnd.add(course[2].split('/')[1]);
+          duration.add(course[3]);
+          switch (course[4]) {
+            case '1':
+            groupC.add('الأولى');
+              
+              break;
+             case '2':
+            groupC.add('الثانية');
+              
+              break; 
+            case '3':
+            groupC.add('الثالثة');
+              
+              break;
+             case '4':
+            groupC.add('الرابعة');
+              
+            break; 
+            case '5':
+            groupC.add('الخامسة');
+              
+              break;
+          }
+          flahAllDay.add(course[5]);
+
+
+        }
+      List<String> labTime = decoded['response'][0]['labsTimes'].split('*');
+      for(int i =0 ;i< labTime.length ; i++){
+          List<String> labs = labTime[i].split(',');
+          startL.add(labs[0].split('/')[0]);
+          endL.add(labs[0].split('/')[1]);
+          flahAllDayL.add(labs[1]);}
+     
+
+     
+        
+       }
+    return 1 ;
+
+    
+
+      }
+    
+ 
 
 
 
@@ -349,8 +527,9 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                 indicatorWeight: 3,
                 tabs: [
                   Tab(icon:Icon(Icons.home),text:"الصفحة الرئيسية",),
-                  Tab(icon:Icon(Icons.notifications),text:"الاشعارات"),
                   Tab(icon:Icon(Icons.message),text:"الرسائل"),
+                  Tab(icon:Icon(Icons.notifications),text:"الاشعارات"),
+                  
 
 
                 ],
@@ -372,8 +551,9 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
               
               children: [
                 buildHomePage(context),
-               buildNotification(context),
-               buildChat(context),
+                buildChat(context),
+                buildNotification(context),
+               
 
 
               ],
@@ -382,10 +562,10 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
         ),
           
          wafaa? Padding(
-            padding: const EdgeInsets.fromLTRB(0, 88, 183, 0),
+            padding: const EdgeInsets.fromLTRB(0, 88, 315, 0),
             
             child: CircleAvatar(
-                  backgroundColor:Colors.redAccent,
+                  backgroundColor:Colors.red[900],
                   radius: 5,
               
                         // Text("1",style: GoogleFonts.amiri(fontSize: 10))
@@ -455,7 +635,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                       InkWell(
 
                         onTap:(){
-                          getNotification();
+                          // getNotification();
                              
 
                           Navigator.push(
@@ -482,8 +662,9 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                            status.clear();
                            year.clear();
                              int responce = await getalltables();
+                             
                            if(responce == 1){
-                             getNotification();
+                            //  getNotification();
                            
 
                             Navigator.push(
@@ -501,6 +682,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                                       ),
                                     ),
                                   ); 
+ 
                            }
                          },
                            
@@ -515,7 +697,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                          onTap: ()async{
                            int responce = await getroomsall();
                            if(responce == 1){
-                             getNotification();
+                            //  getNotification();
                            
 
                             Navigator.push(
@@ -546,7 +728,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                            instNames.clear();
                            int response = await getInst();
                            if(response ==1){
-                             getNotification();
+                            //  getNotification();
                                  Navigator.push(
                                     context,
                                     MaterialPageRoute<void>(
@@ -666,7 +848,83 @@ Widget buildNotification(BuildContext context) {
 
                constraints: BoxConstraints(maxHeight:110),
               child: InkWell( 
-               
+               onTap: ()async{
+                 print(user.from);
+
+         if(user.from == 'head'){   
+         int responce = await getTimes(user.hour);
+                           if(responce == 1){
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                         TimesOfSemester(
+                                        idDep:widget.idDep,
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+
+                                        start: start,
+                                        end: end,
+                                        breakFlag:breakFlag ,
+                                        breakTimeStart:breakTimeStart,
+                                        breakTimeEnd: breakTimeEnd,
+                                        duration: duration,
+                                        flahAllDay:flahAllDay,
+                                        groupC:groupC,
+                                        startL: startL,
+                                        endL: endL,
+                                        flahAllDayL:flahAllDayL
+
+                                      ),
+                                    ),
+                                  );
+                           }
+
+                         
+
+
+         }
+           if(user.from == 'sch'){ 
+                             tablenames.clear();
+                           status.clear();
+                           year.clear();
+                             int responce = await getalltables();
+                             
+                           if(responce == 1){
+                            //  getNotification();
+                           
+
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                         AllTableshow(
+                                        idDep:widget.idDep,
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+                                        tablenames:tablenames,
+                                        status:status,
+                                        year:year ,
+                                        semster:semester
+                                      ),
+                                    ),
+                                  ); 
+ 
+                           }
+                           }
+                           
+
+
+
+
+setState(() {
+                    
+                        user.flag = 'false';
+                    
+                    updateNoti(user.note);
+                    wafaa = false;
+                 });
+               },
                               child: ListTile(
 
                                 // tileColor: user.flag == 'true' ?Colors.grey[300]:Colors.white,
@@ -685,27 +943,27 @@ Widget buildNotification(BuildContext context) {
                                                       letterSpacing: 1.7,
                                                     //  / height: 1.32,
                                                       ),),
-                                                    user.flag =='true'?Padding(
-                                                      padding: const EdgeInsets.fromLTRB(0, 0, 160, 2),
-                                                      child:  InkWell(child: Icon(Icons.done),
+                //                                     user.flag =='true'?Padding(
+                //                                       padding: const EdgeInsets.fromLTRB(0, 0, 160, 2),
+                //                                       child:  InkWell(child: Icon(Icons.done),
 
-                                                      onTap: (){
-                                                        setState(() {
+                //                                       onTap: (){
+                //                                         setState(() {
                     
-                        user.flag = 'false';
+                //         user.flag = 'false';
                     
-                    updateNoti(user.note);
-                    wafaa = false;
-                 });
+                //     updateNoti(user.note);
+                //     wafaa = false;
+                //  });
                 
                                          
                  
 
-                                                      },
-                                                     ),
+                //                                       },
+                //                                      ),
                                                       
                  
-                ):SizedBox(height: 0,),
+                // ):SizedBox(height: 0,),
                                                    
                                         ]),
                 ),
@@ -840,13 +1098,14 @@ class Inst{
 }
 
 class NotificationMessage{
+  final int id;
   final String note;
   String flag;
   final String from;
   final String hour;
 
 
-  NotificationMessage(this.note, this.flag, this.from, this.hour);
+  NotificationMessage(this.note, this.flag, this.from, this.hour, this.id);
 
 
   

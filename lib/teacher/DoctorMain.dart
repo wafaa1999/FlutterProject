@@ -1,8 +1,11 @@
 
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:graduationproject/screens/times.dart';
 import 'package:graduationproject/teacher/chat2.dart';
 import 'package:graduationproject/teacher/finalTableD.dart';
 import 'package:graduationproject/teacher/softCon.dart';
@@ -33,6 +36,19 @@ class _DoctorMainState extends State<DoctorMain> {
      final notifications = FlutterLocalNotificationsPlugin();
      List<Inst> insts= [];
     String doctorId ="";
+    List<String> notes = [];
+    List<String> status = [];
+    List<String> fromTime1 = [];
+    List<String> toTime1 = [];
+    List<String> days1 = [];
+
+    List<String> courseNamesd = [] ;
+    List<String> courseNumbersd = [] ;
+    List<String> daysd = [] ;
+    List<String> toTimed = [] ;
+    List<String> fromTimed = [] ;
+    List<String> roomd = [] ;
+    Timer timer;
 
  
  
@@ -52,20 +68,112 @@ class _DoctorMainState extends State<DoctorMain> {
 
 
     getUser();
+     timer = Timer.periodic(Duration(seconds: 150), (Timer t) =>getNotification());
+   
     
   }
-    List<String> notes = [];
-    List<String> status = [];
-    List<String> fromTime1 = [];
-    List<String> toTime1 = [];
-    List<String> days1 = [];
 
-  List<String> courseNamesd = [] ;
-  List<String> courseNumbersd = [] ;
-  List<String> daysd = [] ;
-  List<String> toTimed = [] ;
-  List<String> fromTimed = [] ;
-  List<String> roomd = [] ;
+    @override
+void dispose() {
+  timer?.cancel();
+  super.dispose();
+}
+
+      List<String> start=[];
+   List<String> end=[];
+   List<String> breakFlag=[]; // في بريك  بفصل ع الباك سلاش
+   List<String> breakTimeStart=[];
+    List<String> breakTimeEnd=[];
+   List<String> duration=[];
+   List<String> groupC=[];
+   List<String>flahAllDay=[];
+   List<String> startL=[];
+   List<String> endL=[];
+   List<String>flahAllDayL=[];
+            // bool wafaa = true;
+    Future getTimes(String date) async {
+      
+    
+   start.clear();
+   end.clear();
+   breakFlag.clear();
+   breakTimeStart.clear();
+   breakTimeEnd.clear();
+   duration.clear();
+   groupC.clear();
+   flahAllDay.clear();
+   startL.clear();
+   endL.clear();
+   flahAllDayL.clear();
+ 
+
+
+
+    print(widget.idDep);
+    final String apiUrl = "https://core-graduation.herokuapp.com/getTimesForHeadOfDep?date=$date";
+    final response =
+        await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+  
+        Map decoded = json.decode(response.body) as Map<String, dynamic>;; 
+        print(decoded['response'].length);
+        List<String> courseTime = decoded['response'][0]['courseTimes'].split('*');
+        
+        for(int i =0 ;i< courseTime.length ; i++){
+          List<String> course = courseTime[i].split(',');
+          start.add(course[0].split('/')[0]);
+          end.add(course[0].split('/')[1]);
+          breakFlag.add(course[1]);
+          breakTimeStart.add(course[2].split('/')[0]);
+          breakTimeEnd.add(course[2].split('/')[1]);
+          duration.add(course[3]);
+          switch (course[4]) {
+            case '1':
+            groupC.add('الأولى');
+              
+              break;
+             case '2':
+            groupC.add('الثانية');
+              
+              break; 
+            case '3':
+            groupC.add('الثالثة');
+              
+              break;
+             case '4':
+            groupC.add('الرابعة');
+              
+            break; 
+            case '5':
+            groupC.add('الخامسة');
+              
+              break;
+          }
+          flahAllDay.add(course[5]);
+
+
+        }
+      List<String> labTime = decoded['response'][0]['labsTimes'].split('*');
+      for(int i =0 ;i< labTime.length ; i++){
+          List<String> labs = labTime[i].split(',');
+          startL.add(labs[0].split('/')[0]);
+          endL.add(labs[0].split('/')[1]);
+          flahAllDayL.add(labs[1]);}
+     
+
+     
+        
+       }
+    return 1 ;
+
+    
+
+      }
+    
+ 
+
+
 
   Future getalldata4() async {
     notes.clear();
@@ -160,7 +268,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
 
      for(int i =0; i<decoded['response'].length; i++){
       //  if (decoded['response'][i]['idDep'] == widget.idDep && decoded['response'][i]['type'] != 'head of department')
-       noti1.add(NotificationMessage(decoded['response'][i]['note'],decoded['response'][i]['flag'],decoded['response'][i]['from'],decoded['response'][i]['hour']));  
+       noti1.add(NotificationMessage(decoded['response'][i]['note'],decoded['response'][i]['flag'],decoded['response'][i]['from'],decoded['response'][i]['date']));  
            if (decoded['response'][i]['flag'] == 'true'){
              showSilentNotification(notifications,
                   title: 'تنبيه', body: decoded['response'][i]['note'], id: i);
@@ -178,7 +286,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
       
 
       print(wafaa);
-      // int k =0;
+      int k =0;
       for (int j = (noti1.length) -1 ; j>= 0 ;j--){
         noti.add(noti1[j]);
         // k++;
@@ -282,8 +390,9 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                 indicatorWeight: 3,
                 tabs: [
                   Tab(icon:Icon(Icons.home),text:"الصفحة الرئيسية",),
+                   Tab(icon:Icon(Icons.message),text:"الرسائل"),
                   Tab(icon:Icon(Icons.notifications),text:"الاشعارات"),
-                  Tab(icon:Icon(Icons.message),text:"الرسائل"),
+                 
 
 
                 ],
@@ -305,8 +414,9 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
               
               children: [
                 buildHomePage(context),
+                buildChat(context),
                buildNotification(context),
-               buildChat(context),
+               
 
 
               ],
@@ -315,10 +425,10 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
         ),
           
          wafaa? Padding(
-            padding: const EdgeInsets.fromLTRB(0, 88, 183, 0),
+            padding: const EdgeInsets.fromLTRB(0, 88, 315, 0),
             
             child: CircleAvatar(
-                  backgroundColor:Colors.redAccent,
+                  backgroundColor:Colors.red[900],
                   radius: 5,
               
                         // Text("1",style: GoogleFonts.amiri(fontSize: 10))
@@ -388,7 +498,7 @@ https://core-graduation.herokuapp.com/editNotification?idDep=60ddc9735b4d43f8eaa
                       InkWell(
 
                         onTap:()async{
-                          getNotification();
+                          // getNotification();
                             int res = await getalldata4();
                           if(res == 1) {
 
@@ -554,6 +664,85 @@ Widget buildNotification(BuildContext context) {
 
                constraints: BoxConstraints(maxHeight:110),
               child: InkWell( 
+                onTap: ()async{
+                 if (user.from == 'head'){
+                   if(user.from == 'head'){   
+         int responce = await getTimes(user.hour);
+                           if(responce == 1){
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                         TimesOfSemester(
+                                        idDep:widget.idDep,
+                                        instName: widget.instName,
+                                        depName: widget.depName,
+
+                                        start: start,
+                                        end: end,
+                                        breakFlag:breakFlag ,
+                                        breakTimeStart:breakTimeStart,
+                                        breakTimeEnd: breakTimeEnd,
+                                        duration: duration,
+                                        flahAllDay:flahAllDay,
+                                        groupC:groupC,
+                                        startL: startL,
+                                        endL: endL,
+                                        flahAllDayL:flahAllDayL
+
+                                      ),
+                                    ),
+                                  );
+                           }
+
+                         
+
+
+         }
+
+
+
+                 }
+                 else {
+                    int inm = await getFinalDataTable();
+         if(inm == 1){
+             Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                         ShowFinalTableD(
+
+                                        idDep:widget.idDep,
+                                        instName:widget.instName,
+                                        depName:widget.depName,
+                          
+                                        courseNumbers :courseNumbersd,
+                                        courseNames :courseNamesd,
+                                        room:roomd,
+                                        fromTime:fromTimed,
+                                        toTime:toTimed,
+                                        days:daysd,
+                                        
+      
+                                      ),
+                                    ),
+             );
+         
+         }
+
+
+
+
+                 }
+
+                  setState(() {
+                    
+                        user.flag = 'false';
+                    
+                    updateNoti(user.note);
+                    wafaa = false;
+                 });
+                },
                
                               child: ListTile(
 
@@ -574,27 +763,21 @@ Widget buildNotification(BuildContext context) {
                                                       letterSpacing: 1.7,
                                                     //  / height: 1.32,
                                                       ),),
-                                                    user.flag =='true'?Padding(
-                                                      padding: const EdgeInsets.fromLTRB(0, 0, 160, 2),
-                                                      child:  InkWell(child: Icon(Icons.done),
+                //                                     user.flag =='true'?Padding(
+                //                                       padding: const EdgeInsets.fromLTRB(0, 0, 160, 2),
+                //                                       child:  InkWell(child: Icon(Icons.done),
 
-                                                      onTap: (){
-                                                        setState(() {
-                    
-                        user.flag = 'false';
-                    
-                    updateNoti(user.note);
-                    wafaa = false;
-                 });
+                //                                       onTap: (){
+                                                       
                 
                                          
                  
 
-                                                      },
-                                                     ),
+                //                                       },
+                //                                      ),
                                                       
                  
-                ):SizedBox(height: 0,),
+                // ):SizedBox(height: 0,),
                                                    
                                         ]),
                 ),

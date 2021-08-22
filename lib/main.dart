@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:graduationproject/screens/ForgetPassword.dart';
 import 'package:graduationproject/screens/HeadOfDepMain.dart';
 import 'package:graduationproject/screens/Login.dart';
+import 'package:graduationproject/screens/times.dart';
 import 'package:graduationproject/widgets/teses2SecondPage.dart';
 
 

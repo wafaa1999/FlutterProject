@@ -348,7 +348,7 @@ class _AddSoftState extends State<AddSoft> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
               child: Row(children: [
-                Text("الوزن",style: GoogleFonts.amiri(
+                Text("الاهمية",style: GoogleFonts.amiri(
                                                 fontSize: 18,
                                                 color:Colors.black,
                                                   

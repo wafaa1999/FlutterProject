@@ -42,6 +42,8 @@ class _ShowInstState extends State<ShowInst> {
      bool delete = false;
      bool flag = false;
      var t = 0;
+     int sortColumn ;
+     bool isAsending = false;
 
      final columns = ['اسم المدرس'];
      @override
@@ -60,6 +62,8 @@ class _ShowInstState extends State<ShowInst> {
   Widget build(BuildContext context) {
     t = 0;
     return Scaffold(
+      
+      
        drawer: AppDrawer(
              idDep: widget.idDep,instName: widget.instName,depName: widget.depName,
              ),
@@ -182,11 +186,18 @@ class _ShowInstState extends State<ShowInst> {
             ),
               
            
-
-          
-              wafaa?
+              
+          Theme(
+  // Find and extend the parent theme using "copyWith". See the next
+  // section for more info on `Theme.of`.
+  data: Theme.of(context).copyWith(iconTheme: IconThemeData(color: Colors.white)),
+ 
+    child:  wafaa?
               buildDataTable():buildDataTable(),
+  ),
 
+             
+            
 
 
             ]),
@@ -205,6 +216,8 @@ class _ShowInstState extends State<ShowInst> {
 
   Widget buildDataTable(){
     return DataTable(
+      sortAscending: isAsending,
+      sortColumnIndex: sortColumn,
       headingRowColor: MaterialStateColor.resolveWith((states) {
   
              return Color.fromRGBO(79, 84, 103, 1); 
@@ -316,6 +329,7 @@ List<DataColumn> getColumns(List<String> columns) {
     return columns.map((String column) {
 
       return DataColumn(
+        onSort: onsort,
         
         label: Padding(
  padding: const EdgeInsets.fromLTRB(0, 0, 25, 0),
@@ -329,7 +343,17 @@ List<DataColumn> getColumns(List<String> columns) {
         ),
       );
     }).toList();
+
+
   }
+    void onsort(int columnIndex, bool ascending){
+      setState(() {
+        this.sortColumn = columnIndex;
+        this.isAsending = ascending;
+
+      });
+
+    }
 
 
 
